@@ -14,3 +14,9 @@ We would like to expand our Ensembl beta’s search functionality to include and
 
 
 
+##### Instruction to setup elastic search server locally
+
+1. Make sure docker is installed. Run `docker network create elastic`
+2. Next run `docker run --name es01 --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -t docker.elastic.co/elasticsearch/elasticsearch:8.8.0`
+3. The above step starts the server and prints the password. Make a note of it, it will be printed only on first run.
+4. First 3 steps are required for initial setup. To re-run a existing docker container, run `docker start es01` & enter password if promted.
