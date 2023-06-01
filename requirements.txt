@@ -1,2 +1,8 @@
+beautifulsoup4
 Django==4.2.1
 django-elasticsearch-dsl==7.3
+pymysql
+pandas
+requests
+sqlalchemy
+
