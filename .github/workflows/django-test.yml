@@ -1,0 +1,36 @@
+name: Git workflow to test Django app with SQLite.
+
+on:
+    workflow_call:
+    workflow_dispatch:
+    push:
+       branches: [main]
+    pull_request:
+        branches: [main]
+
+
+jobs:
+  simple_build:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: some-test-key
+      PYTHON_VERSION: 3.10
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+           python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install requirements
+        run: |
+            pip install -r requirements.txt
+      - name: Run tests
+        env:
+          DEBUG: "0"
+          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+        run: |
+            cd src
+            python manage.py test
+
