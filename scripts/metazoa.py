@@ -7,36 +7,49 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-species_url = "https://metazoa.ensembl.org/species.html"
-response = requests.get(species_url)
-soup = BeautifulSoup(response.text, "lxml")
+def get_taxon_ids(url):
 
-table = soup.find("table") # {"class":"data_table exportable ss autocenter"}
-taxon_dfs = pd.read_html(str(table))
-metazoa_tids = taxon_dfs[0]['Taxon ID'].values
-print("extracted metazoa tax ids:", len(metazoa_tids))
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "lxml")
 
-ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
+    table = soup.find("table") # {"class":"data_table exportable ss autocenter"}
+    taxon_dfs = pd.read_html(str(table))
+    taxon_tids = taxon_dfs[0]['Taxon ID'].values
+    print("extracted taxanomy ids:", len(taxon_tids))
 
-metazoa_df = pd.DataFrame()
-for i in range(len(metazoa_tids[:])):
-    taxonid = metazoa_tids[i]
-    query = f"""SELECT n2.taxon_id ,n2.parent_id ,na.name
-                ,n2.rank ,na.name_class
-                ,n2.left_index, n2.right_index
-                FROM ncbi_taxa_node n1 
-                JOIN (ncbi_taxa_node n2
-                    LEFT JOIN ncbi_taxa_name na 
-                    ON n2.taxon_id = na.taxon_id)  
-                ON n2.left_index <= n1.left_index 
-                AND n2.right_index >= n1.right_index 
-                WHERE n1.taxon_id = {taxonid}
-                ORDER BY left_index
-    """
+    return taxon_tids
 
-    df = pd.read_sql_query(query, ncbi_engine)
-    df['query_taxon_id'] = taxonid
-    metazoa_df = pd.concat([metazoa_df, df])
+
+def get_taxon_tree(taxon_ids, db_engine):
     
+    tree_df = pd.DataFrame()
+    for i in range(len(taxon_ids[:])):
+        taxonid = taxon_ids[i]
+        query = f"""SELECT n2.taxon_id ,n2.parent_id ,na.name
+                    ,n2.rank ,na.name_class
+                    ,n2.left_index, n2.right_index
+                    FROM ncbi_taxa_node n1 
+                    JOIN (ncbi_taxa_node n2
+                        LEFT JOIN ncbi_taxa_name na 
+                        ON n2.taxon_id = na.taxon_id)  
+                    ON n2.left_index <= n1.left_index 
+                    AND n2.right_index >= n1.right_index 
+                    WHERE n1.taxon_id = {taxonid}
+                    ORDER BY left_index
+        """
 
-metazoa_df.to_csv("metazoa_taxon.csv", index=False)
+        df = pd.read_sql_query(query, db_engine)
+        df['query_taxon_id'] = taxonid
+        tree_df = pd.concat([tree_df, df])
+    
+    tree_df.to_csv("metazoa_taxon.csv", index=False)
+
+    return tree_df
+    
+if __name__ == "__main__":
+    species_url = "https://metazoa.ensembl.org/species.html"
+    ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
+    
+    metazoa_ids = get_taxon_ids(species_url)
+    metazoa_df = get_taxon_tree(metazoa_ids, ncbi_engine)
+
