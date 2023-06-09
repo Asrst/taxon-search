@@ -88,6 +88,14 @@ ELASTICSEARCH_DSL={
     },
 }
 
+ES_INDEXES = {
+    'default': [
+        ('taxonomy', 'taxon_search.indexes.Taxon'),
+    ]
+}
+
+ES_DEFAULT_BATCH_SIZE = 100
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

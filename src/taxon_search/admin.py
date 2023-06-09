@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import NCBITaxaNode, NCBITaxaName
 
-# Register your models here.
+
+# Registering the models
+admin.site.register(NCBITaxaNode)
+admin.site.register(NCBITaxaName)
+
