@@ -3,7 +3,7 @@ from django.db import models
 class NCBITaxaNode(models.Model):
 
     taxon_id = models.IntegerField(primary_key=True)
-    parent_id = models.ForeignKey('self', on_delete=models.CASCADE, null=False, db_index=True)
+    parent_id = models.ForeignKey('self', default=0, on_delete=models.CASCADE, null=True, db_index=True)
     rank = models.CharField(max_length=32, null=False, db_index=True)
     genbank_hidden_flag = models.SmallIntegerField(null=False, default=0)
     left_index = models.IntegerField(null=False, default=0, db_index=True)
@@ -24,6 +24,6 @@ class NCBITaxaName(models.Model):
 
     class Meta:
         db_table = 'ncbi_taxa_name'
-        unique_together = (('taxon_id', 'name'),)
+        unique_together = (('taxon_id', 'name', 'name_class'),)
 
 
