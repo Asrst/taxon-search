@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlparse
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,9 +84,11 @@ DATABASES = {
     }
 }
 
+ES_URL = urlparse(os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
+
 ELASTICSEARCH_DSL={
     'default': {
-        'hosts': 'localhost:9200'
+        'hosts': ES_URL
     },
 }
 
