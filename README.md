@@ -24,3 +24,10 @@ We would like to expand our Ensembl beta’s search functionality to include and
 ##### Workarounds for errors/bugs
 - In case you error asking to increase VM memory limit on windows WSL then use the below command
     `sudo sysctl -w vm.max_map_count=262144`
+
+##### some useful linux commands:
+- To load fixtures into django models `python3 manage.py loaddata data.json`
+- To set env varaibles `set -o allexport && source conf-file && set +o allexport`
+- To set env varaibles `export $(xargs < .env)`
+- To see/query env variables `printenv <env-var-name>`
+
