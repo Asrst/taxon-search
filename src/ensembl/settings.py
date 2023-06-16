@@ -84,7 +84,7 @@ DATABASES = {
     }
 }
 
-ES_URL = urlparse(os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
+ES_URL = (os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
 
 ELASTICSEARCH_DSL={
     'default': {
@@ -92,11 +92,11 @@ ELASTICSEARCH_DSL={
     },
 }
 
-ES_INDEXES = {
-    'default': [
-        ('taxonomy', 'taxon_search.indexes.Taxon'),
-    ]
-}
+# ES_INDEXES = {
+#     'default': [
+#         ('taxonomy', 'taxon_search.indexes.Taxon'),
+#     ]
+# }
 
 ES_DEFAULT_BATCH_SIZE = 100
 
