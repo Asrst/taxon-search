@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 class NCBITaxaNode(models.Model):
 
@@ -21,9 +22,8 @@ class NCBITaxaName(models.Model):
                                  related_name='taxaname_taxon_id')
     name = models.CharField(max_length=500, db_index=True)
     name_class = models.CharField(max_length=50, null=False, db_index=True)
+    # mod_date = models.DateField(default=date.today)
 
     class Meta:
         db_table = 'ncbi_taxa_name'
         unique_together = (('taxon_id', 'name', 'name_class'),)
-
-
