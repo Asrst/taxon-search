@@ -20,3 +20,14 @@ We would like to expand our Ensembl beta’s search functionality to include and
 2. Next run `docker run --name es01 --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -t docker.elastic.co/elasticsearch/elasticsearch:8.8.0`
 3. The above step starts the server and prints the password. Make a note of it, it will be printed only on first run.
 4. First 3 steps are required for initial setup. To re-run a existing docker container, run `docker start es01` & enter password if promted.
+
+##### Workarounds for errors/bugs
+- In case you error asking to increase VM memory limit on windows WSL then use the below command
+    `sudo sysctl -w vm.max_map_count=262144`
+
+##### some useful linux commands:
+- To load fixtures into django models `python3 manage.py loaddata data.json`
+- To set env varaibles `set -o allexport && source conf-file && set +o allexport`
+- To set env varaibles `export $(xargs < .env)`
+- To see/query env variables `printenv <env-var-name>`
+

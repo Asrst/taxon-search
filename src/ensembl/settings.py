@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlparse
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,12 +33,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'taxon_search.apps.TaxonSearchConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -80,6 +84,21 @@ DATABASES = {
     }
 }
 
+ES_URL = (os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': ES_URL
+    },
+}
+
+# ES_INDEXES = {
+#     'default': [
+#         ('taxonomy', 'taxon_search.indexes.Taxon'),
+#     ]
+# }
+
+ES_DEFAULT_BATCH_SIZE = 100
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
