@@ -1,7 +1,7 @@
 from django_elasticsearch_dsl import Document, fields, Index
 from django_elasticsearch_dsl.registries import registry
 from .models import NCBITaxaName, NCBITaxaNode
-from elasticsearch_dsl import analyzer
+from elasticsearch_dsl import analyzer, token_filter
 from django.forms.models import model_to_dict
 
 
@@ -12,10 +12,19 @@ taxon_index.settings(
     number_of_replicas=0
 )
 
+synonym_token_filter = token_filter(
+    'synonym_token_filter', # Name for the filter
+    'synonym', # Synonym filter type
+    synonyms=[
+        'reactjs, react',  # <-- important
+    ],
+    # synonyms_path = "analysis/wn_s.pl"
+    )
+
 index_analyzer = analyzer(
     'index_analyzer',
     tokenizer="standard",
-    filter=["lowercase"],
+    filter=["lowercase", "stop", synonym_token_filter],
 )
 
 
