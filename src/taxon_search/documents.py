@@ -27,7 +27,6 @@ index_analyzer = analyzer(
     filter=["lowercase", "stop", synonym_token_filter],
 )
 
-
 @registry.register_document
 @taxon_index.document
 class TaxanomyDocument(Document):
