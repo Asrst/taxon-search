@@ -3,6 +3,8 @@ from django_elasticsearch_dsl.registries import registry
 from .models import NCBITaxaName, NCBITaxaNode
 from elasticsearch_dsl import analyzer, token_filter
 from django.forms.models import model_to_dict
+from .utils import load_synonym_file
+import os
 
 
 taxon_index = Index('taxon')
@@ -15,9 +17,10 @@ taxon_index.settings(
 synonym_token_filter = token_filter(
     'synonym_token_filter', # Name for the filter
     'synonym', # Synonym filter type
-    synonyms=[
-        'reactjs, react',  # <-- important
-    ],
+    synonyms = load_synonym_file(os.path.join(os.path.dirname(__file__), 'taxon-elastic-search.syn'))
+    # synonyms=[
+    #     'reactjs, react',  # <-- important
+    # ],
     # synonyms_path = "analysis/wn_s.pl"
     )
 
@@ -55,7 +58,6 @@ class TaxanomyDocument(Document):
     parent_id = fields.ObjectField(properties={
         'parent_id': fields.IntegerField()
     })
-
 
 
     class Django:
@@ -98,7 +100,10 @@ class TaxanomyDocument(Document):
         # print(NCBITaxaName.objects.select_related().all()[67].__dict__)
         # print(NCBITaxaName.objects.ncbitaxanode_set.all()[67].__dict__)
         # print(model_to_dict(result[454]))
-        return result
+
+        # print(len(result.filter(taxon_id_id__rank='species')))
+
+        return result.filter(name_class="scientific name").filter(taxon_id__rank='species')
 
     def get_instances_from_related(self, related_instance):
         """If related_models is set, define how to retrieve the instance(s) from the related model.

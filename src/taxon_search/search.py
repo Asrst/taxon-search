@@ -12,7 +12,7 @@ def search_species(query):
     q_results = []
 
     for hit in hits:
-        print(hit, hit.taxon_id)
+        # print(hit, hit.taxon_id)
 
         data = {
             "name": hit.name,
