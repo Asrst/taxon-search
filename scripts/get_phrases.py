@@ -42,12 +42,7 @@ def get_taxon_names(taxon_ids, db_conn):
     #           .groupby(["taxon_id"])['name'].apply(", ".join).reset_index())
     
     syn_df = query_df[(~query_df['rank'].isin(['no rank'])) & 
-            (query_df['name_class'].isin(['scientific name', 'synonym', 'equivalent name']))].reset_index(drop=1)
-    
-    syn_df['name'] = syn_df['name'].apply(lambda x : x.lower().replace(" ", "_"))
-    
-    syn_df = (syn_df.sort_values(by=["query_taxon_id", "left_index"], ascending=False)
-                .groupby(["query_taxon_id"])['name'].apply(", ".join).reset_index())
+                      (query_df['name_class'].isin(['scientific name']))]
 
     return syn_df
 
@@ -64,8 +59,13 @@ if __name__ == "__main__":
     # count the synonyms
     taxon_syns['len'] = taxon_syns['name'].str.split(",").str.len()
 
-    # filter on taxons having atleast 1 synonym
-    elastic_syn = taxon_syns[taxon_syns['len'] > 1]
+    # replace spaces with _
+    phrases = []
+    for name in taxon_syns['name'].values:
+        if len(name.split()) > 1:
+            style = "{} => {}"
+            ph = name.lower().replace(" ", "_")
+            phrases.append(style.format(name, ph))
 
-    # save the synonyms into a text file to load into elastic search
-    elastic_syn['name'].to_csv("taxon-elastic-search.syn", header=None, index=None, sep=',')
+    # save the phrases into a text file to load into elastic search
+    pd.Series(phrases).to_csv("taxon-elastic-search.ph", header=None, index=None, sep=',')
