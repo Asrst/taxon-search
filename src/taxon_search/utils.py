@@ -5,6 +5,6 @@ def load_synonym_file(path):
         for line in f.readlines():
             syn_list.append(line)
 
-    print("synonyms file loaded...")
-
+    print(f"{path} file loaded...")
+ 
     return syn_list

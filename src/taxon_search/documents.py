@@ -14,9 +14,17 @@ taxon_index.settings(
     number_of_replicas=0
 )
 
+autophrase_syn_filter = token_filter(
+    name_or_instance='autophrase_syn_filter', # Name for the filter
+    type='synonym', # Synonym filter type
+    synonyms = load_synonym_file(os.path.join(os.path.dirname(__file__), 'taxon-elastic-search.ph'))
+    )
+
+
 synonym_token_filter = token_filter(
-    'synonym_token_filter', # Name for the filter
-    'synonym', # Synonym filter type
+    name_or_instance='synonym_token_filter', # Name for the filter
+    type='synonym', # Synonym filter type
+    tokenizer = "keyword",
     synonyms = load_synonym_file(os.path.join(os.path.dirname(__file__), 'taxon-elastic-search.syn'))
     # synonyms=[
     #     'reactjs, react',  # <-- important
@@ -27,7 +35,7 @@ synonym_token_filter = token_filter(
 index_analyzer = analyzer(
     'index_analyzer',
     tokenizer="standard",
-    filter=["lowercase", "stop", synonym_token_filter],
+    filter=["lowercase", "stop", autophrase_syn_filter, synonym_token_filter],
 )
 
 @registry.register_document
