@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from sqlalchemy import create_engine
+import re
 
 def get_taxon_ids(url):
 
@@ -18,6 +19,22 @@ def get_taxon_ids(url):
 
     return taxon_tids
 
+def preprocess_name(r):
+    
+    name = r['name']
+    if r['name_class'] != 'scientific name':
+        name = re.sub(r"[,.;@#?!&$\(\)]+\ *", " ", name)
+        name = re.sub(' +', ' ', name)
+        
+    out = name.lower().replace(" ", "_").strip("_")
+    # print(out)
+
+    if len(out.split("_")) > 1:
+        style = "{} => {}"
+        return style.format(r['name'], out)
+    
+    return pd.NA
+
 def get_taxon_names(taxon_ids, db_conn):
     
     query_df = pd.DataFrame()
@@ -27,7 +44,7 @@ def get_taxon_names(taxon_ids, db_conn):
                     FROM ncbi_taxa_node n1 
                     JOIN (ncbi_taxa_node n2
                         LEFT JOIN ncbi_taxa_name na 
-                        ON n2.taxon_id = na.taxon_id AND na.name_class = "scientific name")  
+                        ON n2.taxon_id = na.taxon_id)  
                     ON n2.left_index <= n1.left_index 
                     AND n2.right_index >= n1.right_index 
                     WHERE n1.taxon_id = {taxonid}
@@ -38,11 +55,11 @@ def get_taxon_names(taxon_ids, db_conn):
         query_df = pd.concat([query_df, df])
     
     query_df = query_df.drop_duplicates()
-    # syn_df = (query_df.sort_values(by=['taxon_id', 'name_class'])
-    #           .groupby(["taxon_id"])['name'].apply(", ".join).reset_index())
     
-    syn_df = query_df[(~query_df['rank'].isin(['no rank'])) & 
-                      (query_df['name_class'].isin(['scientific name']))]
+    syn_df = query_df[(query_df['name_class'].isin(['scientific name', 'synonym', 'equivalent name']))
+                    & (~query_df['rank'].isin(['no rank']))].reset_index(drop=1)
+    
+    syn_df['phrase'] = syn_df.apply(lambda r: preprocess_name(r), axis=1)
 
     return syn_df
 
@@ -59,13 +76,8 @@ if __name__ == "__main__":
     # count the synonyms
     taxon_syns['len'] = taxon_syns['name'].str.split(",").str.len()
 
-    # replace spaces with _
-    phrases = []
-    for name in taxon_syns['name'].values:
-        if len(name.split()) > 1:
-            style = "{} => {}"
-            ph = name.lower().replace(" ", "_")
-            phrases.append(style.format(name, ph))
+    # get phrases
+    phrases = taxon_syns['phrase'].dropna().unique()
 
     # save the phrases into a text file to load into elastic search
     pd.Series(phrases).to_csv("taxon-elastic-search.ph", header=None, index=None, sep=',')
