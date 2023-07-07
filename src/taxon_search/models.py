@@ -15,7 +15,6 @@ class NCBITaxaNode(models.Model):
         db_table = 'ncbi_taxa_node'
 
 
-
 class NCBITaxaName(models.Model):
 
     taxon_id = models.ForeignKey(NCBITaxaNode, on_delete=models.CASCADE, db_index=True, 
@@ -27,3 +26,16 @@ class NCBITaxaName(models.Model):
     class Meta:
         db_table = 'ncbi_taxa_name'
         unique_together = (('taxon_id', 'name', 'name_class'),)
+
+
+class EnsemblMetadata(models.Model):
+    
+    taxonomy_id = models.IntegerField()
+    url_name = models.CharField(max_length=1000)
+    display_name = models.CharField(max_length=1000)
+    scientific_name = models.CharField(max_length=1000)
+    strain = models.CharField(max_length=500, null=True)
+
+    class Meta:
+        db_table = 'ensembl_metadata'
+        unique_together = (('taxonomy_id', 'display_name'),)
