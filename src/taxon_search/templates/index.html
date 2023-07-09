@@ -1,7 +1,7 @@
 <html>
 <head>
 
-<title>Taxanomy Search</title>
+<title>Taxonomy Search</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -9,7 +9,7 @@
 <body>
 <div class="container">
         <br>
-        <h1>Taxanomy Search</h1>
+        <h1>Taxonomy Search</h1>
         <br>
 
     <form class="form-inline">
@@ -40,18 +40,18 @@
             <th scope="col">#</th>
             <th scope="col" >Taxon ID</th>
             <th scope="col">Name</th>
-            <th scope="col">Rank</th>
-            <th scope="col">Name Class</th>
+            <th scope="col">Strain</th>
+            <!-- <th scope="col">Name Class</th> -->
           </tr>
         </thead>
         <tbody>
         {% for result in results %}
           <tr>
             <th scope="row">{{forloop.counter}}</th>
-            <td ><a href="{% url 'taxon_search:taxon_tree' result.taxon_id.taxon_id %}">{{result.taxon_id.taxon_id}}</a></td>
-            <td>{{ result.name }}</td>
-            <td>{{result.taxon_id.rank}}</td>
-            <td>{{ result.name_class }}</td>
+            <td ><a href="{% url 'taxon_search:taxon_tree' result.taxon_id %}">{{result.taxon_id}}</a></td>
+            <td><a href="{{result.ensembl_url}}">{{ result.name }}</a></td>
+            <td>{{result.strain}}</td>
+            <!-- <td>{{ result.name_class }}</td> -->
           </tr>
         {% endfor %}
 
