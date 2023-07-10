@@ -1,6 +1,6 @@
 from django_elasticsearch_dsl import Document, fields, Index
 from django_elasticsearch_dsl.registries import registry
-from .models import NCBITaxaName, NCBITaxaNode, EnsemblMetadata
+from .models import NCBITaxaName, NCBITaxaNode, EnsemblMetadata, NCBITaxaFlat
 from elasticsearch_dsl import analyzer, token_filter
 from django.forms.models import model_to_dict
 from .utils import load_synonym_file
@@ -23,6 +23,7 @@ autophrase_syn_filter = token_filter(
 
 synonym_token_filter = token_filter(
     name_or_instance='synonym_token_filter', # Name for the filter
+    lenient = False,
     type='synonym', # Synonym filter type
     tokenizer = "keyword",
     synonyms = load_synonym_file(os.path.join(os.path.dirname(__file__), 'taxon-elastic-search.syn'))
@@ -105,7 +106,7 @@ class TaxanomyDocument(Document):
         # for ob in NCBITaxaName.objects.select_related('taxon_id'):
         #     print(ob.taxon_id.ncbitaxanode_set.all()[0].__dict__)
 
-        # print(NCBITaxaName.objects.select_related().all()[67].__dict__)
+        # print(NCBITaxaName.objects.select_related().all()[67].)__dict__
         # print(NCBITaxaName.objects.ncbitaxanode_set.all()[67].__dict__)
         # print(model_to_dict(result[454]))
 
@@ -162,6 +163,55 @@ class EnsemblTaxonDocument(Document):
         """Not mandatory but to improve performance we can select related in one sql request"""
         
         result = super(EnsemblTaxonDocument, self).get_queryset().all()
+
+        return result
+
+    def get_instances_from_related(self, related_instance):
+        """If related_models is set, define how to retrieve the instance(s) from the related model.
+        The related_models option should be used with caution because it can lead in the index
+        to the updating of a lot of items.
+        """
+
+        pass
+
+
+
+taxon_flat_index = Index('ncbi_taxon_flat')
+
+taxon_flat_index.settings(
+    number_of_shards=1,
+    number_of_replicas=0
+)
+
+
+@registry.register_document
+@taxon_flat_index.document
+class TaxonFlatDocument(Document):
+
+    taxon_id = fields.IntegerField(attr='taxon_id')
+    parent_id = fields.IntegerField(attr='parent_id')
+    left_index = fields.IntegerField(attr='left_index')
+    right_index = fields.IntegerField(attr='right_index')
+
+    rank = fields.KeywordField(attr='rank')
+    name = fields.KeywordField(attr='name')
+    name_class = fields.KeywordField(attr='name_class')
+
+    species_taxon_id = fields.IntegerField(attr='species_taxon_id')
+    name_index = fields.KeywordField(attr='name_index')
+    
+
+    class Django:
+        model = NCBITaxaFlat # The model associated with this Document
+
+        # The fields of the model you want to be indexed in Elasticsearch
+        fields = []
+        related_models = []
+
+    def get_queryset(self):
+        """Not mandatory but to improve performance we can select related in one sql request"""
+        
+        result = super(TaxonFlatDocument, self).get_queryset().all()
 
         return result
 

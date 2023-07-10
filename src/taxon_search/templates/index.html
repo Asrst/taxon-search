@@ -48,8 +48,8 @@
         {% for result in results %}
           <tr>
             <th scope="row">{{forloop.counter}}</th>
-            <td ><a href="{% url 'taxon_search:taxon_tree' result.taxon_id %}">{{result.taxon_id}}</a></td>
-            <td><a href="{{result.ensembl_url}}">{{ result.name }}</a></td>
+            <td ><a href="{% url 'taxon_search:taxon_tree' result.taxonomy_id %}">{{result.taxonomy_id}}</a></td>
+            <td><a href="{{result.ensembl_url}}">{{ result.display_name }}</a></td>
             <td>{{result.strain}}</td>
             <!-- <td>{{ result.name_class }}</td> -->
           </tr>

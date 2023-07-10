@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from .search import search_species
+from .models import NCBITaxaFlat, EnsemblMetadata
 from django.db import connection
 
 
@@ -20,11 +21,24 @@ def index(request):
     q = query_params.get('q')
 
     context = {}
-
+    output = []
     if q is not None:
         results = search_species(q)
-        context['results'] = results
+        matched_species = set([d['species_taxon_id'] for d in results])
+        species_names = EnsemblMetadata.objects.filter(taxonomy_id__in=matched_species)
+        species_dict = [species_names[i].__dict__ for i in range(0, len(species_names))]
+
+        for d in species_dict:
+            d['ensembl_url'] = "http://metazoa.ensembl.org/" + str(d["url_name"])
+
+        context['results'] = species_dict
         context['query'] = q
+
+
+    
+
+
+
 
     #return HttpResponse("Hello, world. You're at the Tax on search index.")
     return render(request, "index.html", context)
