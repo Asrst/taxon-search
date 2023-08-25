@@ -1,6 +1,6 @@
 from django_elasticsearch_dsl import Document, fields, Index
 from django_elasticsearch_dsl.registries import registry
-from .models import NCBITaxaName, NCBITaxaNode, EnsemblMetadata, NCBITaxaFlat
+from .models import NCBITaxaName, NCBITaxaNode, EnsemblMetadata, NCBITaxonFlat
 from elasticsearch_dsl import analyzer, token_filter
 from django.forms.models import model_to_dict
 from .utils import load_synonym_file
@@ -8,7 +8,6 @@ import os
 
 
 taxon_index = Index('taxon')
-
 taxon_index.settings(
     number_of_shards=1,
     number_of_replicas=0
@@ -126,34 +125,32 @@ class TaxanomyDocument(Document):
             pass
 
 
-ensembl_taxon_index = Index('ensembl_taxon')
 
-ensembl_taxon_index.settings(
+# to register all NCBI taxonomy names
+ncbi_taxon = Index('ncbi_taxon')
+
+ncbi_taxon.settings(
     number_of_shards=1,
     number_of_replicas=0
 )
 
-
 @registry.register_document
-@ensembl_taxon_index.document
-class EnsemblTaxonDocument(Document):
+@ncbi_taxon.document
+class NCBITaxonDocument(Document):
 
-    scientific_name = fields.TextField(
-        attr='scientific_name',
-        analyzer=index_analyzer,
-        fields={
-            'suggest': fields.Completion(),
-        }
-    )
+    name = fields.KeywordField(attr='name')
+    name_class = fields.KeywordField(attr='name_class')
+    taxon_id = fields.ObjectField(properties={
+                'taxon_id': fields.IntegerField(),
+                'rank':fields.KeywordField(),
+    })
+    parent_id = fields.ObjectField(properties={
+        'parent_id': fields.IntegerField()
+    })
 
-    display_name = fields.KeywordField(attr='display_name')
-    strain = fields.KeywordField(attr='strain')
-    url_name = fields.KeywordField(attr='url_name')
-    taxonomy_id = fields.IntegerField(attr='taxonomy_id')
-    
 
     class Django:
-        model = EnsemblMetadata # The model associated with this Document
+        model = NCBITaxaName # The model associated with this Document
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = []
@@ -162,7 +159,7 @@ class EnsemblTaxonDocument(Document):
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
         
-        result = super(EnsemblTaxonDocument, self).get_queryset().all()
+        result = super(NCBITaxonDocument, self).get_queryset().all()
 
         return result
 
@@ -175,14 +172,13 @@ class EnsemblTaxonDocument(Document):
         pass
 
 
-
-taxon_flat_index = Index('ncbi_taxon_flat')
+#### Ensembl Taxonomy Flat
+taxon_flat_index = Index('taxon_flat')
 
 taxon_flat_index.settings(
     number_of_shards=1,
     number_of_replicas=0
 )
-
 
 @registry.register_document
 @taxon_flat_index.document
@@ -199,10 +195,24 @@ class TaxonFlatDocument(Document):
 
     species_taxon_id = fields.IntegerField(attr='species_taxon_id')
     name_index = fields.KeywordField(attr='name_index')
+
+
+    # scientific_name = fields.TextField(
+    #     attr='scientific_name',
+    #     analyzer=index_analyzer,
+    #     fields={
+    #         'suggest': fields.Completion(),
+    #     }
+    # )
+
+    # display_name = fields.KeywordField(attr='display_name')
+    # strain = fields.KeywordField(attr='strain')
+    # url_name = fields.KeywordField(attr='url_name')
+    # taxonomy_id = fields.IntegerField(attr='taxonomy_id')
     
 
     class Django:
-        model = NCBITaxaFlat # The model associated with this Document
+        model = NCBITaxonFlat # The model associated with this Document
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = []

@@ -29,9 +29,31 @@
     </form>
         
     <div>
-        <h4> Search Results for "{{ query }}" </h4>
+        <h4> Displaying search results for query "{{ query }}" </h4>
        <br>
     </div>
+
+    <!-- <div>
+      <h5> Match Type: "{{ name_class }}"</h5>
+     <br>
+  </div> -->
+
+  <!-- <div>
+    <h5> Returning Species under the Rank : "{{ rank }}"</h5>
+   <br>
+</div> -->
+
+{% if match_type == 'synonym' %}
+  <b><h5> Returning synonym species for "{{query}}": </h5></b>
+{% endif %}
+
+{% if match_type == 'related' %}
+<b><h5> Returning species under given "{{rank}} - {{query}}":</h5></b>
+{% endif %}
+
+{% if match_type == 'ancestor' %}
+<b><h5> Returning closely related species under first common ancestor "{{common_ancestor}}": </h5></b>
+{% endif %}
 
 
     <table class="table table-striped">

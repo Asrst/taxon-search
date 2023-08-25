@@ -1,4 +1,4 @@
-from .documents import TaxanomyDocument, EnsemblTaxonDocument, TaxonFlatDocument
+from .documents import TaxanomyDocument, TaxonFlatDocument
 
 
 def search_species(query):
@@ -41,7 +41,8 @@ def search_species(query):
     q_results = []
 
     for hit in hits:
-        print(hit.name, hit.name_class, hit.species_taxon_id, hit.meta.score)
+        print(hit.name, hit.name_class, hit.taxon_id, hit.species_taxon_id, hit.meta.score)
+        print(hit.parent_id)
         # print(hit.display_name, hit.strain, hit.url_name)
 
         data = {
@@ -49,11 +50,10 @@ def search_species(query):
             "name": hit.name,
             "name_class": hit.name_class,
             "species_taxon_id": hit.species_taxon_id,
-            "rank": hit.rank
+            "rank": hit.rank,
+            "parent_id":hit.parent_id
         }
         q_results.append(data)
-
-
 
 
     return q_results
