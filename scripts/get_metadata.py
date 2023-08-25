@@ -14,8 +14,10 @@ def get_taxon_metadata(db_connection):
                     left join genome g
                     on o.organism_id = g.organism_id 
                     left join division d 
-                    on g.division_id = d.division_id 
+                    on g.division_id = d.division_id
+                    LEFT JOIN data_release USING (data_release_id)
                     where d.short_name = 'EM'
+                    AND is_current = 1
                     """
 
     org_df = pd.read_sql_query(sql_text(query), db_connection)

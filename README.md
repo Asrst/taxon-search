@@ -36,4 +36,6 @@ We would like to expand our Ensembl beta’s search functionality to include and
 - To set env varaibles `set -o allexport && source conf-file && set +o allexport`
 - To set env varaibles `export $(xargs < .env)`
 - To see/query env variables `printenv <env-var-name>`
+- `DELETE FROM TABLE_NAME`
+- `python3 manage.py dbshell`
 
