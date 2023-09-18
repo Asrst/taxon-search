@@ -10,7 +10,6 @@ def search_species(query):
     # hits = TaxanomyDocument.search().query("match", name=query)
 
     # q_results = []
-
     # for hit in hits:
     #     print(hit, hit.meta.score)
 
