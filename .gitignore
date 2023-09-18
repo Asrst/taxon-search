@@ -1,6 +1,9 @@
 # wsl
 *Zone.Identifier
 
+#https certificate
+*.crt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

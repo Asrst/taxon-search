@@ -7,10 +7,16 @@ The search engine of any website can be one of the most useful tools for users t
 
 We would like to expand our Ensembl beta’s search functionality to include and support searching based on taxonomic information. In particular, we are interested in providing users a list of close relatives when a given species is requested and it is not part of Ensembl (yet), return the list of species available given a taxonomic clade instead of a species name, or find a species even when a (homotypic) synonym is provided instead of its current scientific name. The objective of this project is to create a standalone Elasticsearch tool that can handle taxonomic-related requests.
 
-##### Expected results
-- Search tool returns the actual species’ link when the species is in Ensembl, including checking for taxonomy synonyms
-- Search tool returns options for close-relatives of introduced species (if any) when the species is not part of Ensembl
-- Search tool returns options for species within the given taxonomy clade (if any)
+##### Expected search results
+1. Search tool returns the actual species link when the species is in Ensembl, including checking for taxonomy synonyms.
+2. Search tool returns options for species within the given taxonomy clade (if any).
+3. Search tool returns options for close-relatives of introduced species (if any) when the species is not part of Ensembl.
+
+**Taxonomy Name classes in the scope:**
+ - `scientific name`, `synonym` and `equivalent name` (contains informal synonyms of formal scientific names) will be the primary focus during the initial stage of the project. 
+- We might want to also consider `misspelling` and `misnomer`, but only in the later stages (after above ones are complete). The same applied to `anamorph` and `teleomorph`, since these two are only applicable to Fungi.
+- It seems `acronym` is primarily used for the viruses, so not applicable to Ensembl for the time being.
+
 
 
 
@@ -30,4 +36,6 @@ We would like to expand our Ensembl beta’s search functionality to include and
 - To set env varaibles `set -o allexport && source conf-file && set +o allexport`
 - To set env varaibles `export $(xargs < .env)`
 - To see/query env variables `printenv <env-var-name>`
+- `DELETE FROM TABLE_NAME`
+- `python3 manage.py dbshell`
 

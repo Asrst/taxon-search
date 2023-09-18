@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from urllib.parse import urlparse
 import os
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,7 +83,26 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }, 
+
+    'ncbi_taxon': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ncbi_taxonomy_109',
+        'USER': 'anonymous',
+        # 'PASSWORD': 'password',
+        'HOST': 'ensembldb.ensembl.org',
+        'PORT': '5306',
+    }, 
+
+    'ensembl_metadata': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ensembl_metadata_109',
+        'USER': 'anonymous',
+        # 'PASSWORD': 'password',
+        'HOST': 'ensembldb.ensembl.org',
+        'PORT': '5306',
     }
+
 }
 
 ES_URL = (os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')

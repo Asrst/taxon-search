@@ -14,7 +14,7 @@ def get_taxon_ids(url):
 
     table = soup.find("table") # {"class":"data_table exportable ss autocenter"}
     taxon_dfs = pd.read_html(str(table))
-    taxon_tids = taxon_dfs[0]['Taxon ID'].values
+    taxon_tids = taxon_dfs[0]['Taxon ID'].unique()
     print("extracted taxanomy ids:", len(taxon_tids))
 
     return taxon_tids
