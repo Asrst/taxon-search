@@ -3,7 +3,7 @@
 1. Install python dependencies.
     `pip install -r requirements.txt`
 
-2. Define the environment variables in env file (refer the sample in the repo).
+2. Define the environment variables. Refer the `.env-sample`, add url & rename the file to `.env`
     `export $(xargs < .env)`
 
 3. Run scripts to download the ensembl metadata & taxonomy data into json files (fixtures).
@@ -12,7 +12,6 @@
 
 4. Move to source directory `cd src` and Run Django model migrations.
     `python3 manage.py migrate`
-
 
 5. Load fixtures (taxonflat & ensembl metadata jsons) into django models.
     `python3 manage.py loaddata ensembl_metadata.json`
@@ -23,5 +22,4 @@
 7. Index documents into elastic search.
     `python3 manage.py search_index --rebuild`
 
-7. Run django application server.
-    `python3 manage.py runserver`
+8. Open the localhost url (http://127.0.0.1:8000/) in your browser.
