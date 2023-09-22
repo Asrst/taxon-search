@@ -38,4 +38,6 @@ We would like to expand our Ensembl beta’s search functionality to include and
 - To see/query env variables `printenv <env-var-name>`
 - `DELETE FROM TABLE_NAME`
 - `python3 manage.py dbshell`
+- `python3 manage.py makemigrations`
+- `python3 manage.py migrate`
 

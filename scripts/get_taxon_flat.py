@@ -75,6 +75,8 @@ if __name__ == "__main__":
     # m2_df['pk'] = None
     m2_df['fields'] = m2_df[field_col].to_dict(orient="records")
     json_str = m2_df[['model', 'fields']].to_json(orient='records')
-    with open("ncbi_taxon_flat.json", "w") as outfile:
+    
+    OUT_FOLDER = f"src/taxon_search/fixtures"
+    with open(f"{OUT_FOLDER}/ncbi_taxon_flat.json", "w") as outfile:
         outfile.write(json_str)
 

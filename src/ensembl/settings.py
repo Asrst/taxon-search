@@ -107,6 +107,7 @@ DATABASES = {
 
 ES_URL = (os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
 
+ELASTICSEARCH_DSL_AUTOSYNC = False
 ELASTICSEARCH_DSL={
     'default': {
         'hosts': ES_URL

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import NCBITaxaNode, NCBITaxaName
+from .models import EnsemblMetadata, NCBITaxonFlat
 
 
 # Registering the models
-admin.site.register(NCBITaxaNode)
-admin.site.register(NCBITaxaName)
+admin.site.register(EnsemblMetadata)
+admin.site.register(NCBITaxonFlat)
 
