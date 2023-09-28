@@ -2,7 +2,6 @@ from .documents import TaxonFlatDocument
 
 
 def search_species(query):
-
     if not query:
         return
 
@@ -15,14 +14,13 @@ def search_species(query):
         print(hit.parent_id)
 
         data = {
-            "taxon_id":hit.taxon_id,
+            "taxon_id": hit.taxon_id,
             "name": hit.name,
             "name_class": hit.name_class,
             "species_taxon_id": hit.species_taxon_id,
             "rank": hit.rank,
-            "parent_id":hit.parent_id
+            "parent_id": hit.parent_id,
         }
         q_results.append(data)
-
 
     return q_results

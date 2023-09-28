@@ -9,20 +9,18 @@ pymysql.install_as_MySQLdb()
 
 
 def get_taxon_ids(url):
-
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
 
     table = soup.find("table")  # {"class": "data_table exportable ss autocenter"}
     taxon_dfs = pd.read_html(str(table))
-    taxon_ids = taxon_dfs[0]['Taxon ID'].unique()
+    taxon_ids = taxon_dfs[0]["Taxon ID"].unique()
     print("extracted taxonomy ids:", len(taxon_ids))
 
     return taxon_ids
 
 
 def get_taxon_tree(taxon_ids, db_engine):
-    
     tree_df = pd.DataFrame()
     for i in range(len(taxon_ids[:])):
         taxon_id = taxon_ids[i]
@@ -40,9 +38,9 @@ def get_taxon_tree(taxon_ids, db_engine):
         """
 
         df = pd.read_sql_query(query, db_engine)
-        df['query_taxon_id'] = taxon_id
+        df["query_taxon_id"] = taxon_id
         tree_df = pd.concat([tree_df, df])
-    
+
     tree_df.to_csv("metazoa_taxon.csv", index=False)
 
     return tree_df
@@ -50,8 +48,7 @@ def get_taxon_tree(taxon_ids, db_engine):
 
 if __name__ == "__main__":
     species_url = "https://metazoa.ensembl.org/species.html"
-    ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
-    
+    ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
+
     metazoa_ids = get_taxon_ids(species_url)
     metazoa_df = get_taxon_tree(metazoa_ids, ncbi_engine)
-

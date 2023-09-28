@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0008_ncbitaxaflat'),
+        ("taxon_search", "0008_ncbitaxaflat"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='NCBITaxaFlat',
-            new_name='EnsemblTaxonFlat',
+            old_name="NCBITaxaFlat",
+            new_name="EnsemblTaxonFlat",
         ),
         migrations.AlterModelTable(
-            name='ensembltaxonflat',
-            table='ensembl_taxon_flat',
+            name="ensembltaxonflat",
+            table="ensembl_taxon_flat",
         ),
     ]

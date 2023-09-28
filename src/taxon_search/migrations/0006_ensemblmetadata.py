@@ -4,25 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0005_alter_ncbitaxaname_unique_together'),
+        ("taxon_search", "0005_alter_ncbitaxaname_unique_together"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='EnsemblMetadata',
+            name="EnsemblMetadata",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('taxonomy_id', models.IntegerField()),
-                ('url_name', models.CharField(max_length=1000)),
-                ('display_name', models.CharField(max_length=1000)),
-                ('scientific_name', models.CharField(max_length=1000)),
-                ('strain', models.CharField(max_length=500)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("taxonomy_id", models.IntegerField()),
+                ("url_name", models.CharField(max_length=1000)),
+                ("display_name", models.CharField(max_length=1000)),
+                ("scientific_name", models.CharField(max_length=1000)),
+                ("strain", models.CharField(max_length=500)),
             ],
             options={
-                'db_table': 'ensembl_metadata',
-                'unique_together': {('taxonomy_id', 'display_name')},
+                "db_table": "ensembl_metadata",
+                "unique_together": {("taxonomy_id", "display_name")},
             },
         ),
     ]
