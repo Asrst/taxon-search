@@ -1,9 +1,9 @@
-import pymysql
-pymysql.install_as_MySQLdb()
-
-import requests
 import pandas as pd
+import pymysql
 from sqlalchemy import create_engine, text as sql_text
+
+
+pymysql.install_as_MySQLdb()
 
 
 def get_taxon_metadata(db_connection):
@@ -25,7 +25,8 @@ def get_taxon_metadata(db_connection):
     org_df.to_csv("metazoa_metadata.csv", index=False)
 
     return org_df
-    
+
+
 if __name__ == "__main__":
     ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ensembl_metadata_109')
     db_conn = ncbi_engine.connect()
@@ -36,8 +37,7 @@ if __name__ == "__main__":
     field_col = ['taxonomy_id', 'url_name', 'display_name', 'scientific_name', 'strain']
     m2_df = metadata_df[pk_col+field_col].drop_duplicates()
     
-    m2_df['model'] = 'taxon_search.EnsemblMetadata' 
-    # m2_df['pk'] = None
+    m2_df['model'] = 'taxon_search.EnsemblMetadata'
     m2_df['fields'] = m2_df[field_col].to_dict(orient="records")
     json_str = m2_df[['model', 'fields']].to_json(orient='records')
 

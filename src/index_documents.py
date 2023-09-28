@@ -1,6 +1,6 @@
-from pydoc import locate
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from pydoc import locate
 
 
 class Command(BaseCommand):

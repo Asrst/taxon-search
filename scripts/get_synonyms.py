@@ -1,40 +1,44 @@
-import pymysql
-pymysql.install_as_MySQLdb()
+import re
 
-import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import pymysql
+import requests
 from sqlalchemy import create_engine
-import re
+
+
+pymysql.install_as_MySQLdb()
+
 
 def get_taxon_ids(url):
 
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
 
-    table = soup.find("table") # {"class":"data_table exportable ss autocenter"}
+    table = soup.find("table")  # {"class": "data_table exportable ss autocenter"}
     taxon_dfs = pd.read_html(str(table))
-    taxon_tids = taxon_dfs[0]['Taxon ID'].unique()
-    print("extracted taxanomy ids:", len(taxon_tids))
+    taxon_ids = taxon_dfs[0]['Taxon ID'].unique()
+    print("extracted taxonomy ids:", len(taxon_ids))
 
-    return taxon_tids
+    return taxon_ids
 
-def preprocess_name(r):
+
+def preprocess_name(text):
     
-    name = r['name']
-    if r['name_class'] != 'scientific name':
+    name = text['name']
+    if text['name_class'] != 'scientific name':
         name = re.sub(r"[,.;@#?!&$\(\)]+\ *", " ", name)
         name = re.sub(' +', ' ', name)
         
     out = name.lower().replace(" ", "_").strip("_")
-    # print(out)
     return out
+
 
 def get_taxon_names(taxon_ids, db_conn):
     
     query_df = pd.DataFrame()
     for i in range(len(taxon_ids[:])):
-        taxonid = taxon_ids[i]
+        taxon_id = taxon_ids[i]
         query = f"""SELECT n2.* , na.name, na.name_class
                     FROM ncbi_taxa_node n1 
                     JOIN (ncbi_taxa_node n2
@@ -42,10 +46,10 @@ def get_taxon_names(taxon_ids, db_conn):
                         ON n2.taxon_id = na.taxon_id)  
                     ON n2.left_index <= n1.left_index 
                     AND n2.right_index >= n1.right_index 
-                    WHERE n1.taxon_id = {taxonid}
+                    WHERE n1.taxon_id = {taxon_id}
                     ORDER BY left_index"""
         df = pd.read_sql_query(query, db_conn)
-        df['query_taxon_id'] = taxonid
+        df['query_taxon_id'] = taxon_id
 
         query_df = pd.concat([query_df, df])
     
@@ -62,7 +66,6 @@ def get_taxon_names(taxon_ids, db_conn):
     return syn_df
 
 
-
 if __name__ == "__main__":
     species_url = "https://metazoa.ensembl.org/species.html"
     ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
@@ -74,7 +77,7 @@ if __name__ == "__main__":
     # count the synonyms
     taxon_syns['len'] = taxon_syns['name'].str.split(",").str.len()
 
-    # filter on taxons having atleast 1 synonym
+    # filter on taxons having at least 1 synonym
     elastic_syn = taxon_syns[taxon_syns['len'] > 1]
 
     # save the synonyms into a text file to load into elastic search

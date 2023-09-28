@@ -13,7 +13,7 @@ class DocumentBase(es.Document):
     def get_index_queryset(self):
         """
         Base queryset for indexing the document.
-        Can be overriden while implementation.
+        Can be overridden while implementation.
         """
         return self.get_model().all()
 
@@ -34,7 +34,6 @@ class DocumentBase(es.Document):
 
         for name, conn in connections.items():
             # gets name and connection value
-            # default, {'hosts': 'localhost'}
             for index, value in indexes.get(name):
                 # get indexes in that connection by name
                 if index == index_name:
@@ -159,7 +158,7 @@ class DocumentBase(es.Document):
     @classmethod
     def prepare_document(cls):
         """
-        refer document lifecylcle
+        refer document lifecycle
         """
         try:
             cls.init()
@@ -169,7 +168,7 @@ class DocumentBase(es.Document):
     @classmethod
     def remove_stale(cls, base_qset, batch_size):
         """
-        Removes docuemts that are present in the index but not in the db.
+        Removes documets that are present in the index but not in the db.
 
         Index meta id and db instance pk needs to be same.
         """

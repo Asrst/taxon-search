@@ -11,14 +11,17 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from urllib.parse import urlparse
 import os
+from urllib.parse import urlparse
+
 import pymysql
+
+
 pymysql.install_as_MySQLdb()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -30,7 +33,6 @@ SECRET_KEY = 'django-insecure-mtzv9voj8j8a8r1l@gl(72wo)u96v1v12^+s3s1=_(6$naf_m%
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -75,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ensembl.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -89,7 +90,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ncbi_taxonomy_109',
         'USER': 'anonymous',
-        # 'PASSWORD': 'password',
         'HOST': 'ensembldb.ensembl.org',
         'PORT': '5306',
     }, 
@@ -98,7 +98,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ensembl_metadata_109',
         'USER': 'anonymous',
-        # 'PASSWORD': 'password',
         'HOST': 'ensembldb.ensembl.org',
         'PORT': '5306',
     }
@@ -113,12 +112,6 @@ ELASTICSEARCH_DSL={
         'hosts': ES_URL
     },
 }
-
-# ES_INDEXES = {
-#     'default': [
-#         ('taxonomy', 'taxon_search.indexes.Taxon'),
-#     ]
-# }
 
 ES_DEFAULT_BATCH_SIZE = 100
 
@@ -140,7 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -151,7 +143,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

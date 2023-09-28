@@ -1,5 +1,6 @@
-from django.db import models
 from datetime import date
+
+from django.db import models
 
 
 class EnsemblMetadata(models.Model):
@@ -26,7 +27,6 @@ class NCBITaxonFlat(models.Model):
     name_class = models.CharField(max_length=50, null=False, db_index=True)
     species_taxon_id = models.IntegerField(null=False)
     name_index = models.CharField(max_length=500, null=False, db_index=True)
-    # mod_date = models.DateField(default=date.today)
 
     class Meta:
         db_table = 'ncbi_taxon_flat'

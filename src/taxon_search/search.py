@@ -6,9 +6,6 @@ def search_species(query):
     if not query:
         return
 
-    # s = TaxanomyDocument.search().filter("term", color="red")
-    # hits = TaxanomyDocument.search().query("match", name=query)
-
     # default: 10 results are returned
     hits = TaxonFlatDocument.search().query("term", name_index=query.lower().strip())
     q_results = []
@@ -16,7 +13,6 @@ def search_species(query):
     for hit in hits:
         print(hit.name, hit.name_class, hit.taxon_id, hit.species_taxon_id, hit.meta.score)
         print(hit.parent_id)
-        # print(hit.display_name, hit.strain, hit.url_name)
 
         data = {
             "taxon_id":hit.taxon_id,
