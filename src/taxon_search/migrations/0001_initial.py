@@ -22,7 +22,8 @@ class Migration(migrations.Migration):
                 (
                     "parent_id",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="taxon_search.ncbitaxanode"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="taxon_search.ncbitaxanode",
                     ),
                 ),
             ],
@@ -36,7 +37,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("name", models.CharField(db_index=True, max_length=500)),

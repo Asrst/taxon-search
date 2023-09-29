@@ -27,13 +27,11 @@ synonym_token_filter = token_filter(
     synonyms=load_synonym_file(ph_file_path),
 )
 
-# Elastic search index time analyzer to be used while indexing documents.  
+# Elastic search index time analyzer to be used while indexing documents.
 index_analyzer = analyzer(
     "index_analyzer",
     tokenizer="standard",
-    filter=["lowercase", "stop", 
-            autophrase_syn_filter, 
-            synonym_token_filter],
+    filter=["lowercase", "stop", autophrase_syn_filter, synonym_token_filter],
 )
 
 #### Define Ensembl Taxonomy Flat on elastic search with appropiate settings.
@@ -45,15 +43,16 @@ taxon_flat_index.settings(number_of_shards=1, number_of_replicas=0)
 @taxon_flat_index.document
 class TaxonFlatDocument(Document):
     """
-    Elastic Search Document Model for Index data from the 
+    Elastic Search Document Model for Index data from the
     NCBITaxonFlat Django Model.
 
-    Auto Indexing signals are disabled. For re-indexing or updating the 
+    Auto Indexing signals are disabled. For re-indexing or updating the
     index, run the below command in `src` directory.
 
     python3 manage.py search_index --rebuild
 
     """
+
     taxon_id = fields.IntegerField(attr="taxon_id")
     parent_id = fields.IntegerField(attr="parent_id")
     left_index = fields.IntegerField(attr="left_index")

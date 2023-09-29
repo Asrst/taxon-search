@@ -22,7 +22,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "-b", "--batch-size", dest="batch_size", type=int, help="Number of items to index at once."
+            "-b",
+            "--batch-size",
+            dest="batch_size",
+            type=int,
+            help="Number of items to index at once.",
         )
         parser.add_argument(
             "-r",
@@ -32,12 +36,26 @@ class Command(BaseCommand):
             help="Remove objects from the index that are no longer present in \
                   the database.",
         )
-        parser.add_argument("-i", "--index", dest="index", type=str, help="Specify which index to update.")
         parser.add_argument(
-            "-c", "--clear_index", action="store_true", default=False, help="Clear and rebuild index."
+            "-i",
+            "--index",
+            dest="index",
+            type=str,
+            help="Specify which index to update.",
         )
         parser.add_argument(
-            "-a", "--age", dest="age", default=0, help="Number of hours back to consider objects new."
+            "-c",
+            "--clear_index",
+            action="store_true",
+            default=False,
+            help="Clear and rebuild index.",
+        )
+        parser.add_argument(
+            "-a",
+            "--age",
+            dest="age",
+            default=0,
+            help="Number of hours back to consider objects new.",
         )
 
     def handle(self, *args, **options):

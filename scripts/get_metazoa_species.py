@@ -9,7 +9,6 @@ pymysql.install_as_MySQLdb()
 
 
 def get_taxon_ids(url):
-
     """
     The function scrapes the metazoa taxonomy ids data
     from a fixed url: https://metazoa.ensembl.org/species.html
@@ -19,7 +18,7 @@ def get_taxon_ids(url):
     that belong to metazoa.
 
     """
-        
+
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
 
@@ -33,9 +32,9 @@ def get_taxon_ids(url):
 
 def get_taxon_tree(taxon_ids, db_engine):
     """
-    The function connects with ensembl My sql database
+    The function connects with ensembl MySQL database
     and runs a sql query to retrieve taxon tree data needed to load
-    into django models as fixtures. 
+    into django models as fixtures.
 
     Parameters:
     taxon_ids (List): list of taxonomy ids for which entire tree structures
@@ -43,7 +42,7 @@ def get_taxon_tree(taxon_ids, db_engine):
     db_conn (sqlalchemy.create_engine): A sqlalchemy engine.
 
     Returns:
-    pandas dataframe (pd.DataFrame): tabluar data.
+    pandas dataframe (pd.DataFrame): tabular data.
 
     """
 

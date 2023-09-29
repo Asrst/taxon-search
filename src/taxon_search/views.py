@@ -5,7 +5,7 @@ import pymysql
 from sqlalchemy import create_engine, text as sql_text
 
 from .search import search_species
-from .models import EnsemblMetadata, NCBITaxonFlat
+from .models import EnsemblMetadata
 from .utils import get_relevant_species
 
 pymysql.install_as_MySQLdb()
@@ -14,8 +14,8 @@ pymysql.install_as_MySQLdb()
 # Create your views here.
 def index(request):
     """
-    View function for the index/search page of the 
-    taxonomy search django app. 
+    View function for the index/search page of the
+    taxonomy search django app.
 
     Parameters:
     request : GET request from the front-end containing the query string.
@@ -82,8 +82,8 @@ def index(request):
 
 def taxon_tree(request, taxon_id):
     """
-    View function (GET) for the taxon tree page of the 
-    taxonomy search django app. 
+    View function (GET) for the taxon tree page of the
+    taxonomy search django app.
 
     Parameters:
     request : GET request from the front-end containing the query string.

@@ -33,9 +33,9 @@ def get_taxon_ids(url):
 
 def get_taxon_tree_flat(taxon_ids, db_conn):
     """
-    The function connects with ensembl My sql database
+    The function connects with ensembl MySQL database
     and runs a sql query to retrieve taxon tree data needed to load
-    into django models as fixtures. 
+    into django models as fixtures.
 
     Parameters:
     taxon_ids (List): list of taxonomy ids for which entire tree structures
@@ -43,10 +43,10 @@ def get_taxon_tree_flat(taxon_ids, db_conn):
     db_conn (sqlalchemy.create_engine): A sqlalchemy engine.
 
     Returns:
-    pandas dataframe (pd.DataFrame): tabluar data.
+    pandas dataframe (pd.DataFrame): tabular data.
 
     """
-        
+
     unique_taxons = list(set(taxon_ids))
 
     tree_df = pd.DataFrame()
@@ -86,7 +86,6 @@ if __name__ == "__main__":
     add_ids = [707708, 549330, 365367, 10235, 2816133]
     all_ids = metazoa_ids + add_ids
     metazoa_df = get_taxon_tree_flat(all_ids, db_conn)
-
 
     # the below code converts the dataframe into json format
     # required by django to load as fixtures.

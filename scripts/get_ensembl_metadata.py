@@ -10,16 +10,16 @@ def get_taxon_metadata(db_connection):
     """
     The function connects with ensembl My sql database
     and runs a sql query to retrieve data needed to load
-    into django models as fixtures. 
+    into django models as fixtures.
 
     Parameters:
     db_connection (sqlalchemy.create_engine): A sqlalchemy engine.
 
     Returns:
-    pandas dataframe (pd.DataFrame): tabluar data.
+    pandas dataframe (pd.DataFrame): tabular data.
 
     """
-    
+
     query = f"""select distinct taxonomy_id ,o.name ,url_name 
                     ,display_name ,scientific_name ,strain
                     from organism o

@@ -68,8 +68,7 @@ Before you go ahead make sure you have [Python 3.10](https://www.python.org/down
 
 ### How to install and setup an Elasticsearch server locally
 
-Before you go ahead make sure you have [docker](https://docker.com/) installed and available in your system. The below steps are required only for the initial setup. To re-run an existing docker container, run `docker start my_es_server` and enter the previously saved password if prompted.
-
+Before you go ahead make sure you have [docker](https://docker.com/) installed and available in your system. The steps below are required only for the initial setup. To re-run an existing docker container, run `docker start my_es_server` and enter the previously saved password if prompted.
 
 1. Create the elasticsearch server:
     ```bash
@@ -110,11 +109,11 @@ Before you go ahead make sure you have [docker](https://docker.com/) installed a
     ```bash
     printenv <env-var-name>
     ```
-- To query Database using Django models
+- To query the database using Django models
     ```bash
     python3 manage.py dbshell
     ```
-- Make Django Migrations
+- Make Django migrations
     ```bash
     python3 manage.py makemigrations
     ```
