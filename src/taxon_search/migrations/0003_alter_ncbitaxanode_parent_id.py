@@ -5,15 +5,16 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0002_rename_taxaname_taxon_id_ncbitaxaname_taxon_id_and_more'),
+        ("taxon_search", "0002_rename_taxaname_taxon_id_ncbitaxaname_taxon_id_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ncbitaxanode',
-            name='parent_id',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='taxon_search.ncbitaxanode'),
+            model_name="ncbitaxanode",
+            name="parent_id",
+            field=models.ForeignKey(
+                default=0, on_delete=django.db.models.deletion.CASCADE, to="taxon_search.ncbitaxanode"
+            ),
         ),
     ]

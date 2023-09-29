@@ -4,19 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0001_initial'),
+        ("taxon_search", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='ncbitaxaname',
-            old_name='taxaname_taxon_id',
-            new_name='taxon_id',
+            model_name="ncbitaxaname",
+            old_name="taxaname_taxon_id",
+            new_name="taxon_id",
         ),
         migrations.AlterUniqueTogether(
-            name='ncbitaxaname',
-            unique_together={('taxon_id', 'name')},
+            name="ncbitaxaname",
+            unique_together={("taxon_id", "name")},
         ),
     ]

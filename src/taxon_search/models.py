@@ -1,9 +1,9 @@
-from django.db import models
 from datetime import date
+
+from django.db import models
 
 
 class EnsemblMetadata(models.Model):
-    
     taxonomy_id = models.IntegerField()
     url_name = models.CharField(max_length=1000)
     display_name = models.CharField(max_length=1000)
@@ -11,12 +11,11 @@ class EnsemblMetadata(models.Model):
     strain = models.CharField(max_length=500, null=True)
 
     class Meta:
-        db_table = 'ensembl_metadata'
-        unique_together = (('taxonomy_id', 'display_name'),)
+        db_table = "ensembl_metadata"
+        unique_together = (("taxonomy_id", "display_name"),)
 
 
 class NCBITaxonFlat(models.Model):
-
     taxon_id = models.IntegerField(null=False)
     parent_id = models.IntegerField(null=False)
     left_index = models.IntegerField(null=False, default=0)
@@ -26,8 +25,7 @@ class NCBITaxonFlat(models.Model):
     name_class = models.CharField(max_length=50, null=False, db_index=True)
     species_taxon_id = models.IntegerField(null=False)
     name_index = models.CharField(max_length=500, null=False, db_index=True)
-    # mod_date = models.DateField(default=date.today)
 
     class Meta:
-        db_table = 'ncbi_taxon_flat'
-        unique_together = (('taxon_id', 'name', 'name_class', 'species_taxon_id'),)
+        db_table = "ncbi_taxon_flat"
+        unique_together = (("taxon_id", "name", "name_class", "species_taxon_id"),)

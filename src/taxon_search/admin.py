@@ -5,4 +5,3 @@ from .models import EnsemblMetadata, NCBITaxonFlat
 # Registering the models
 admin.site.register(EnsemblMetadata)
 admin.site.register(NCBITaxonFlat)
-

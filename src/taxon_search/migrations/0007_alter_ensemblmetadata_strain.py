@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0006_ensemblmetadata'),
+        ("taxon_search", "0006_ensemblmetadata"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ensemblmetadata',
-            name='strain',
+            model_name="ensemblmetadata",
+            name="strain",
             field=models.CharField(max_length=500, null=True),
         ),
     ]

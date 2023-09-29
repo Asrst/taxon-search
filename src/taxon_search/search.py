@@ -2,12 +2,8 @@ from .documents import TaxonFlatDocument
 
 
 def search_species(query):
-
     if not query:
         return
-
-    # s = TaxanomyDocument.search().filter("term", color="red")
-    # hits = TaxanomyDocument.search().query("match", name=query)
 
     # default: 10 results are returned
     hits = TaxonFlatDocument.search().query("term", name_index=query.lower().strip())
@@ -16,17 +12,15 @@ def search_species(query):
     for hit in hits:
         print(hit.name, hit.name_class, hit.taxon_id, hit.species_taxon_id, hit.meta.score)
         print(hit.parent_id)
-        # print(hit.display_name, hit.strain, hit.url_name)
 
         data = {
-            "taxon_id":hit.taxon_id,
+            "taxon_id": hit.taxon_id,
             "name": hit.name,
             "name_class": hit.name_class,
             "species_taxon_id": hit.species_taxon_id,
             "rank": hit.rank,
-            "parent_id":hit.parent_id
+            "parent_id": hit.parent_id,
         }
         q_results.append(data)
-
 
     return q_results

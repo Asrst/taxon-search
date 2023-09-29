@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.db import connection
+import pymysql
+from sqlalchemy import create_engine, text as sql_text
+
 from .search import search_species
 from .models import EnsemblMetadata, NCBITaxonFlat
-from django.db import connection
 
-import pymysql
+
 pymysql.install_as_MySQLdb()
-from sqlalchemy import create_engine, text as sql_text
 
 
 def my_custom_sql(self):
@@ -20,62 +22,62 @@ def my_custom_sql(self):
 
 # Create your views here.
 def index(request):
-
     query_params = request.GET
-    q = query_params.get('q')
+    q = query_params.get("q")
 
     context = {}
     results = []
     if q is not None and len(q) > 1:
         search_results = search_species(q)
 
-        name_class = [d['name_class'] for d in search_results][0]
-        rank = [d['rank'] for d in search_results][0]
+        name_class = [d["name_class"] for d in search_results][0]
+        rank = [d["rank"] for d in search_results][0]
 
-        matched_species = set([d['species_taxon_id'] for d in search_results])
+        matched_species = set([d["species_taxon_id"] for d in search_results])
         species_names = EnsemblMetadata.objects.filter(taxonomy_id__in=matched_species)
-        
-        context['query'] = q
-        context['match_type'] = "excat"
 
-        # if name_class = scientific name & rank = species is excat match
-        # if name_class != scientific name & rank = species is returning synoyms [returning synonym species for]
-        # if name_class = scientific name & rank != species is species under provided rank [returning closely related species under given rank]
-        # if name_class != scientific name & rank != species is rank synonynms + species under provided rank 
-        # if no species found then traverse the tree and return species under common ancestors [returning species under common ancestor].
+        context["query"] = q
+        context["match_type"] = "excat"
+
+        # if name_class = scientific_name & rank = species is exact match
+        # if name_class != scientific_name & rank = species is returning synonyms
+        #   [returning synonym species for]
+        # if name_class = scientific_name & rank != species is species under provided rank
+        #   [returning closely related species under given rank]
+        # if name_class != scientific_name & rank != species is rank synonyms + species under provided rank
+        # if no species found then traverse the tree and return species under common ancestors
+        #   [returning species under common ancestor]
 
         if len(species_names) > 0:
-            
-            if name_class != "scientific name" and rank == 'species':
-                context['match_type'] = 'synonym'
+            if name_class != "scientific name" and rank == "species":
+                context["match_type"] = "synonym"
             elif rank != "species":
-                context['match_type'] = 'related'
-                context['rank'] = rank
+                context["match_type"] = "related"
+                context["rank"] = rank
 
             species_list = [species_names[i].__dict__ for i in range(0, len(species_names))]
-            for d in species_list:
-                d['ensembl_url'] = "http://metazoa.ensembl.org/" + str(d["url_name"])
-                results.append(d)
+            for species in species_list:
+                species["ensembl_url"] = "http://metazoa.ensembl.org/" + str(species["url_name"])
+                results.append(species)
         else:
             for sp_dict in search_results:
                 species_list, common_ancestor = get_relevant_species(sp_dict)
-                for d in species_list:
-                    d['ensembl_url'] = "http://metazoa.ensembl.org/" + str(d["url_name"])
-                    results.append(d)
+                for species in species_list:
+                    species["ensembl_url"] = "http://metazoa.ensembl.org/" + str(species["url_name"])
+                    results.append(species)
 
-                context['match_type'] = "ancestor"
-                context['common_ancestor'] = common_ancestor
+                context["match_type"] = "ancestor"
+                context["common_ancestor"] = common_ancestor
 
-    context['results'] = results
+    context["results"] = results
 
     return render(request, "index.html", context)
 
 
 def get_relevant_species(sp_dict):
+    taxon_id = sp_dict["species_taxon_id"]
+    all_parent_ids = get_all_parents(taxon_id)[::-1]
 
-    taxid = sp_dict["species_taxon_id"]
-    all_parent_ids = get_all_parents(taxid)[::-1]
-    
     # for a given taxonomy id, get all parent ids from the tree.
     # start from last, iterate through each parent id
     # try to get get species from that parent id & match with ensembl database.
@@ -100,8 +102,7 @@ def get_relevant_species(sp_dict):
 
 
 def get_all_parents(taxon_id):
-
-    ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
+    ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
 
     query = f"""SELECT n2.parent_id, na.name
                 FROM ncbi_taxa_node n1 
@@ -116,13 +117,11 @@ def get_all_parents(taxon_id):
     with ncbi_engine.connect() as cursor:
         rows = cursor.execute(sql_text(query))
 
-    # print([r for r in rows])
     return [r for r in rows]
 
 
 def get_species_from_parent(parent_id):
-
-    ncbi_engine = create_engine('mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109')
+    ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
 
     query = f"""SELECT distinct ntn.taxon_id
                 FROM ncbi_taxa_node AS Parents, ncbi_taxa_node AS Children
@@ -137,14 +136,10 @@ def get_species_from_parent(parent_id):
     with ncbi_engine.connect() as cursor:
         rows = cursor.execute(sql_text(query))
 
-    # print([r for r in rows])
     return [r[0] for r in rows]
 
 
 def taxon_tree(request, taxon_id):
-
-    # print(taxon_id)
-
     query = f"""SELECT n2.taxon_id , n2.parent_id_id ,na.name
                     ,n2.rank ,na.name_class
                     ,n2.left_index, n2.right_index
@@ -164,19 +159,16 @@ def taxon_tree(request, taxon_id):
 
     results = []
     for row in rows:
-        d = {}
-        d['taxon_id'] = row[0]
-        d['parent_id'] = row[1]
-        d['name'] = row[2]
-        d['rank'] = row[3]
-        d['name_class'] = row[4]
-        results.append(d)
+        entry = {}
+        entry["taxon_id"] = row[0]
+        entry["parent_id"] = row[1]
+        entry["name"] = row[2]
+        entry["rank"] = row[3]
+        entry["name_class"] = row[4]
+        results.append(entry)
 
     context = {}
-    context['results'] = results
-    context['query'] = taxon_id
+    context["results"] = results
+    context["query"] = taxon_id
 
-    #return HttpResponse("Hello, world. You're at the Tax on search index.")
     return render(request, "tree.html", context)
-
-

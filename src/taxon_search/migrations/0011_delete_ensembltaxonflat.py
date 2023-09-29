@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0010_taxonflat'),
+        ("taxon_search", "0010_taxonflat"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='EnsemblTaxonFlat',
+            name="EnsemblTaxonFlat",
         ),
     ]

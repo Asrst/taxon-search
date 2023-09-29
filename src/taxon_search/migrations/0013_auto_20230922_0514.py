@@ -4,31 +4,30 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0012_ncbitaxonflat'),
+        ("taxon_search", "0012_ncbitaxonflat"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='ncbitaxaname',
+            name="ncbitaxaname",
             unique_together=None,
         ),
         migrations.RemoveField(
-            model_name='ncbitaxaname',
-            name='taxon_id',
+            model_name="ncbitaxaname",
+            name="taxon_id",
         ),
         migrations.RemoveField(
-            model_name='ncbitaxanode',
-            name='parent_id',
+            model_name="ncbitaxanode",
+            name="parent_id",
         ),
         migrations.DeleteModel(
-            name='TaxonFlat',
+            name="TaxonFlat",
         ),
         migrations.DeleteModel(
-            name='NCBITaxaName',
+            name="NCBITaxaName",
         ),
         migrations.DeleteModel(
-            name='NCBITaxaNode',
+            name="NCBITaxaNode",
         ),
     ]
