@@ -9,6 +9,17 @@ pymysql.install_as_MySQLdb()
 
 
 def get_taxon_ids(url):
+
+    """
+    The function scrapes the metazoa taxonomy ids data
+    from a fixed url: https://metazoa.ensembl.org/species.html
+
+    Returns:
+    return_type (List): List containing the taxonomy ids
+    that belong to metazoa.
+
+    """
+        
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
 
@@ -21,6 +32,21 @@ def get_taxon_ids(url):
 
 
 def get_taxon_tree(taxon_ids, db_engine):
+    """
+    The function connects with ensembl My sql database
+    and runs a sql query to retrieve taxon tree data needed to load
+    into django models as fixtures. 
+
+    Parameters:
+    taxon_ids (List): list of taxonomy ids for which entire tree structures
+    needs to be queried
+    db_conn (sqlalchemy.create_engine): A sqlalchemy engine.
+
+    Returns:
+    pandas dataframe (pd.DataFrame): tabluar data.
+
+    """
+
     tree_df = pd.DataFrame()
     for i in range(len(taxon_ids[:])):
         taxon_id = taxon_ids[i]
@@ -41,8 +67,6 @@ def get_taxon_tree(taxon_ids, db_engine):
         df["query_taxon_id"] = taxon_id
         tree_df = pd.concat([tree_df, df])
 
-    tree_df.to_csv("metazoa_taxon.csv", index=False)
-
     return tree_df
 
 
@@ -52,3 +76,4 @@ if __name__ == "__main__":
 
     metazoa_ids = get_taxon_ids(species_url)
     metazoa_df = get_taxon_tree(metazoa_ids, ncbi_engine)
+    metazoa_df.to_csv("metazoa_taxon_species.csv", index=False)

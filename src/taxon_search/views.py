@@ -6,28 +6,33 @@ from sqlalchemy import create_engine, text as sql_text
 
 from .search import search_species
 from .models import EnsemblMetadata, NCBITaxonFlat
-
+from .utils import get_relevant_species
 
 pymysql.install_as_MySQLdb()
 
 
-def my_custom_sql(self):
-    with connection.cursor() as cursor:
-        cursor.execute("UPDATE bar SET foo = 1 WHERE baz = %s", [self.baz])
-        cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
-        row = cursor.fetchone()
-
-    return row
-
-
 # Create your views here.
 def index(request):
+    """
+    View function for the index/search page of the 
+    taxonomy search django app. 
+
+    Parameters:
+    request : GET request from the front-end containing the query string.
+
+    Returns:
+    render object (django.shortcuts.render): returns the response to the GET
+    request with context/data required to display the results.
+
+    """
+
     query_params = request.GET
     q = query_params.get("q")
 
     context = {}
     results = []
     if q is not None and len(q) > 1:
+        # call the elastic search function in search.py
         search_results = search_species(q)
 
         name_class = [d["name_class"] for d in search_results][0]
@@ -37,16 +42,17 @@ def index(request):
         species_names = EnsemblMetadata.objects.filter(taxonomy_id__in=matched_species)
 
         context["query"] = q
-        context["match_type"] = "excat"
+        context["match_type"] = "exact"
 
+        ### Determine if result/match type as per below conditions.
         # if name_class = scientific_name & rank = species is exact match
         # if name_class != scientific_name & rank = species is returning synonyms
-        #   [returning synonym species for]
+        #   then [returning synonym species for]
         # if name_class = scientific_name & rank != species is species under provided rank
-        #   [returning closely related species under given rank]
+        #   then [returning closely related species under given rank]
         # if name_class != scientific_name & rank != species is rank synonyms + species under provided rank
         # if no species found then traverse the tree and return species under common ancestors
-        #   [returning species under common ancestor]
+        #   then [returning species under common ancestor]
 
         if len(species_names) > 0:
             if name_class != "scientific name" and rank == "species":
@@ -74,72 +80,22 @@ def index(request):
     return render(request, "index.html", context)
 
 
-def get_relevant_species(sp_dict):
-    taxon_id = sp_dict["species_taxon_id"]
-    all_parent_ids = get_all_parents(taxon_id)[::-1]
-
-    # for a given taxonomy id, get all parent ids from the tree.
-    # start from last, iterate through each parent id
-    # try to get get species from that parent id & match with ensembl database.
-    # stop when match is found
-
-    parent_id = all_parent_ids[0][0]
-    parent_name = all_parent_ids[0][1]
-    parent_species = get_species_from_parent(parent_id)
-    ensembl_matches = EnsemblMetadata.objects.filter(taxonomy_id__in=parent_species)
-
-    count = 1
-    while count <= 5 and len(ensembl_matches) < 1:
-        parent_id = all_parent_ids[count][0]
-        parent_name = all_parent_ids[count][1]
-        parent_species = get_species_from_parent(parent_id)
-        ensembl_matches = EnsemblMetadata.objects.filter(taxonomy_id__in=parent_species)
-        count += 1
-
-    species_dict = [ensembl_matches[i].__dict__ for i in range(0, len(ensembl_matches))]
-
-    return species_dict, parent_name
-
-
-def get_all_parents(taxon_id):
-    ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
-
-    query = f"""SELECT n2.parent_id, na.name
-                FROM ncbi_taxa_node n1 
-                JOIN (ncbi_taxa_node n2
-                    LEFT JOIN ncbi_taxa_name na 
-                    ON n2.parent_id = na.taxon_id AND na.name_class = "scientific name")  
-                ON n2.left_index <= n1.left_index 
-                AND n2.right_index >= n1.right_index 
-                WHERE n1.taxon_id = {taxon_id}
-                ORDER BY n2.left_index
-                """
-    with ncbi_engine.connect() as cursor:
-        rows = cursor.execute(sql_text(query))
-
-    return [r for r in rows]
-
-
-def get_species_from_parent(parent_id):
-    ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
-
-    query = f"""SELECT distinct ntn.taxon_id
-                FROM ncbi_taxa_node AS Parents, ncbi_taxa_node AS Children
-                left join ncbi_taxa_name ntn 
-                ON Children.taxon_id = ntn.taxon_id AND ntn.name_class = "scientific name"
-                WHERE Children.left_index > Parents.left_index
-                AND Children.left_index < Parents.right_index
-                AND Parents.taxon_id = {parent_id} AND Children.rank = 'species'
-                order by name
-        """
-
-    with ncbi_engine.connect() as cursor:
-        rows = cursor.execute(sql_text(query))
-
-    return [r[0] for r in rows]
-
-
 def taxon_tree(request, taxon_id):
+    """
+    View function (GET) for the taxon tree page of the 
+    taxonomy search django app. 
+
+    Parameters:
+    request : GET request from the front-end containing the query string.
+    taxon_id : taxon_id for which entire tree needs to be retrieved.
+
+
+    Returns:
+    render object (django.shortcuts.render): returns the response to the GET
+    request with context/data required to display the results.
+
+    """
+
     query = f"""SELECT n2.taxon_id , n2.parent_id_id ,na.name
                     ,n2.rank ,na.name_class
                     ,n2.left_index, n2.right_index
@@ -151,7 +107,7 @@ def taxon_tree(request, taxon_id):
                     AND n2.right_index >= n1.right_index 
                     WHERE n1.taxon_id = {taxon_id}
                     ORDER BY n2.left_index
-        """
+            """
 
     with connection.cursor() as cursor:
         cursor.execute(query)

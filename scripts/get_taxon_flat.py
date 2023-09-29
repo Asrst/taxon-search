@@ -9,7 +9,18 @@ pymysql.install_as_MySQLdb()
 
 
 def get_taxon_ids(url):
-    response = requests.get(url)
+    """
+    The function scrapes the metazoa taxonomy ids data
+    from a fixed url: https://metazoa.ensembl.org/species.html
+
+    Returns:
+    return_type (List): List containing the taxonomy ids
+    that belong to metazoa.
+
+    """
+
+    species_url = "https://metazoa.ensembl.org/species.html"
+    response = requests.get(species_url)
     soup = BeautifulSoup(response.text, "lxml")
 
     table = soup.find("table")  # {"class": "data_table exportable ss autocenter"}
@@ -20,7 +31,22 @@ def get_taxon_ids(url):
     return taxon_ids
 
 
-def get_taxon_tree(taxon_ids, db_conn):
+def get_taxon_tree_flat(taxon_ids, db_conn):
+    """
+    The function connects with ensembl My sql database
+    and runs a sql query to retrieve taxon tree data needed to load
+    into django models as fixtures. 
+
+    Parameters:
+    taxon_ids (List): list of taxonomy ids for which entire tree structures
+    needs to be queried
+    db_conn (sqlalchemy.create_engine): A sqlalchemy engine.
+
+    Returns:
+    pandas dataframe (pd.DataFrame): tabluar data.
+
+    """
+        
     unique_taxons = list(set(taxon_ids))
 
     tree_df = pd.DataFrame()
@@ -53,16 +79,17 @@ def get_taxon_tree(taxon_ids, db_conn):
 
 
 if __name__ == "__main__":
-    species_url = "https://metazoa.ensembl.org/species.html"
     ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")
     db_conn = ncbi_engine.connect()
 
-    metazoa_ids = get_taxon_ids(species_url)
+    metazoa_ids = get_taxon_ids()
     add_ids = [707708, 549330, 365367, 10235, 2816133]
     all_ids = metazoa_ids + add_ids
-    metazoa_df = get_taxon_tree(all_ids, db_conn)
+    metazoa_df = get_taxon_tree_flat(all_ids, db_conn)
 
-    # get data json for taxon_search.EnsemblTaxonFlat model
+
+    # the below code converts the dataframe into json format
+    # required by django to load as fixtures.
     pk_col = []
     field_col = [
         "taxon_id",
@@ -79,11 +106,14 @@ if __name__ == "__main__":
     m2_df = metazoa_df[pk_col + field_col].drop_duplicates()
     m2_df = m2_df.drop_duplicates(subset=unique_key)
 
-    m2_df.to_csv("ncbi_taxon_flat.csv", index=False)
+    # m2_df.to_csv("ncbi_taxon_flat.csv", index=False)
     m2_df["model"] = "taxon_search.NCBITaxonFlat"
     m2_df["fields"] = m2_df[field_col].to_dict(orient="records")
     json_str = m2_df[["model", "fields"]].to_json(orient="records")
 
+    # get/save data json for taxon_search.EnsemblTaxonFlat model
     OUT_FOLDER = f"src/taxon_search/fixtures"
-    with open(f"{OUT_FOLDER}/ncbi_taxon_flat.json", "w") as outfile:
+    SAVE_PATH = f"{OUT_FOLDER}/ncbi_taxon_flat.json"
+    with open(SAVE_PATH, "w") as outfile:
         outfile.write(json_str)
+    print("fixture file saved to {SAVE_PATH}")

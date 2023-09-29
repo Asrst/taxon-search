@@ -8,28 +8,35 @@ from django.forms.models import model_to_dict
 from .models import EnsemblMetadata, NCBITaxonFlat
 from .utils import load_synonym_file
 
+syn_file_path = os.path.join(os.path.dirname(__file__), "static/taxon-elastic-search.ph")
+ph_file_path = os.path.join(os.path.dirname(__file__), "static/taxon-elastic-search.syn")
 
+# File reference for elastic for synonym filtering.
 autophrase_syn_filter = token_filter(
     name_or_instance="autophrase_syn_filter",  # Name for the filter
     type="synonym",  # Synonym filter type
-    synonyms=load_synonym_file(os.path.join(os.path.dirname(__file__), "taxon-elastic-search.ph")),
+    synonyms=load_synonym_file(syn_file_path),
 )
 
+# File reference for elastic for phrases (multi-word) fitering.
 synonym_token_filter = token_filter(
     name_or_instance="synonym_token_filter",  # Name for the filter
     lenient=False,
     type="synonym",  # Synonym filter type
     tokenizer="keyword",
-    synonyms=load_synonym_file(os.path.join(os.path.dirname(__file__), "taxon-elastic-search.syn")),
+    synonyms=load_synonym_file(ph_file_path),
 )
 
+# Elastic search index time analyzer to be used while indexing documents.  
 index_analyzer = analyzer(
     "index_analyzer",
     tokenizer="standard",
-    filter=["lowercase", "stop", autophrase_syn_filter, synonym_token_filter],
+    filter=["lowercase", "stop", 
+            autophrase_syn_filter, 
+            synonym_token_filter],
 )
 
-#### Ensembl Taxonomy Flat
+#### Define Ensembl Taxonomy Flat on elastic search with appropiate settings.
 taxon_flat_index = Index("ncbi_taxon_flat")
 
 taxon_flat_index.settings(number_of_shards=1, number_of_replicas=0)
@@ -37,6 +44,16 @@ taxon_flat_index.settings(number_of_shards=1, number_of_replicas=0)
 
 @taxon_flat_index.document
 class TaxonFlatDocument(Document):
+    """
+    Elastic Search Document Model for Index data from the 
+    NCBITaxonFlat Django Model.
+
+    Auto Indexing signals are disabled. For re-indexing or updating the 
+    index, run the below command in `src` directory.
+
+    python3 manage.py search_index --rebuild
+
+    """
     taxon_id = fields.IntegerField(attr="taxon_id")
     parent_id = fields.IntegerField(attr="parent_id")
     left_index = fields.IntegerField(attr="left_index")
@@ -50,8 +67,8 @@ class TaxonFlatDocument(Document):
     name_index = fields.KeywordField(attr="name_index")
 
     class Django:
-        ####
-        model = NCBITaxonFlat  # The model associated with this Document
+        ## Define Django Model
+        model = NCBITaxonFlat  # The Django model associated with this Document
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = []
