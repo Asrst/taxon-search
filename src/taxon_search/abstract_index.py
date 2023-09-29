@@ -9,11 +9,10 @@ from elasticsearch_dsl.connections import connections
 
 
 class DocumentBase(es.Document):
-
     def get_index_queryset(self):
         """
         Base queryset for indexing the document.
-        Can be overriden while implementation.
+        Can be overridden while implementation.
         """
         return self.get_model().all()
 
@@ -34,16 +33,15 @@ class DocumentBase(es.Document):
 
         for name, conn in connections.items():
             # gets name and connection value
-            # default, {'hosts': 'localhost'}
             for index, value in indexes.get(name):
                 # get indexes in that connection by name
                 if index == index_name:
                     # return the desired index
                     return {
-                        'connection_name': name,
-                        'connection': conn,
-                        'index_name': index,
-                        'index_class': value,
+                        "connection_name": name,
+                        "connection": conn,
+                        "index_name": index,
+                        "index_class": value,
                     }
         return None
 
@@ -55,35 +53,30 @@ class DocumentBase(es.Document):
         if not index:
             index = cls.get_index_config()
         if not index:
-            raise Exception('Index not found!')
+            raise Exception("Index not found!")
 
-        connections.create_connection(
-            hosts=index['connection']['hosts']
-        )
+        connections.create_connection(hosts=index["connection"]["hosts"])
         try:
-            index_instance = es.Index(index['index_name'])
+            index_instance = es.Index(index["index_name"])
             index_instance.delete()
         except Exception:
             pass
-        connections.remove_connection(index['connection_name'])
+        connections.remove_connection(index["connection_name"])
 
     @classmethod
-    def index_documents(cls, index=None, batch_size=None, remove=False,
-                        age=0):
+    def index_documents(cls, index=None, batch_size=None, remove=False, age=0):
         """
         Main controller method for indexing the documents.
         """
         if not index:
             index = cls.get_index_config()
         if not index:
-            raise Exception('Index not found!')
+            raise Exception("Index not found!")
 
         if not batch_size:
             batch_size = settings.ES_DEFAULT_BATCH_SIZE
 
-        connections.create_connection(
-            hosts=index['connection']['hosts']
-        )
+        connections.create_connection(hosts=index["connection"]["hosts"])
         # basically runs Article.init().
         cls.prepare_document()
 
@@ -102,7 +95,7 @@ class DocumentBase(es.Document):
         if remove:
             cls.remove_stale(base_qset, batch_size)
 
-        connections.remove_connection(index['connection_name'])
+        connections.remove_connection(index["connection_name"])
 
     @classmethod
     def get_recently_updated_qset(cls, base_qset, age):
@@ -112,9 +105,8 @@ class DocumentBase(es.Document):
         Always specify the updated_field as a string.
         """
         updated_field = cls().get_updated_field()
-        past_date = datetime.datetime.now() - \
-            datetime.timedelta(hours=age)
-        updated_field = '{}__gte'.format(updated_field)
+        past_date = datetime.datetime.now() - datetime.timedelta(hours=age)
+        updated_field = "{}__gte".format(updated_field)
         filter_kwargs = {updated_field: past_date}
         return base_qset.filter(**filter_kwargs)
 
@@ -159,7 +151,7 @@ class DocumentBase(es.Document):
     @classmethod
     def prepare_document(cls):
         """
-        refer document lifecylcle
+        refer document lifecycle
         """
         try:
             cls.init()
@@ -169,11 +161,11 @@ class DocumentBase(es.Document):
     @classmethod
     def remove_stale(cls, base_qset, batch_size):
         """
-        Removes docuemts that are present in the index but not in the db.
+        Removes documets that are present in the index but not in the db.
 
         Index meta id and db instance pk needs to be same.
         """
-        db_ids = list(base_qset.values_list('id', flat=True))
+        db_ids = list(base_qset.values_list("id", flat=True))
         s = cls.search()
         resp = s.execute()
         total_index = resp.hits.total

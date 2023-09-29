@@ -1,9 +1,0 @@
-beautifulsoup4
-Django==3.2.20
-pymysql
-pandas
-requests
-sqlalchemy
-elasticsearch==7.12
-elasticsearch-dsl
-django-elasticsearch-dsl

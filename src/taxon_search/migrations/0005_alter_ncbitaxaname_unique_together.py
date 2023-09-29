@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('taxon_search', '0004_alter_ncbitaxanode_parent_id'),
+        ("taxon_search", "0004_alter_ncbitaxanode_parent_id"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='ncbitaxaname',
-            unique_together={('taxon_id', 'name', 'name_class')},
+            name="ncbitaxaname",
+            unique_together={("taxon_id", "name", "name_class")},
         ),
     ]

@@ -15,7 +15,7 @@ class NcbiTaxaName(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ncbi_taxa_name'
+        db_table = "ncbi_taxa_name"
 
 
 class NcbiTaxaNode(models.Model):
@@ -29,4 +29,4 @@ class NcbiTaxaNode(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ncbi_taxa_node'
+        db_table = "ncbi_taxa_node"

@@ -11,113 +11,102 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from urllib.parse import urlparse
 import os
+from urllib.parse import urlparse
+
 import pymysql
+
+
 pymysql.install_as_MySQLdb()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mtzv9voj8j8a8r1l@gl(72wo)u96v1v12^+s3s1=_(6$naf_m%'
+SECRET_KEY = "django-insecure-mtzv9voj8j8a8r1l@gl(72wo)u96v1v12^+s3s1=_(6$naf_m%"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    'taxon_search.apps.TaxonSearchConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django_elasticsearch_dsl'
+    "taxon_search.apps.TaxonSearchConfig",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django_elasticsearch_dsl",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'ensembl.urls'
+ROOT_URLCONF = "ensembl.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'ensembl.wsgi.application'
-
+WSGI_APPLICATION = "ensembl.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }, 
-
-    'ncbi_taxon': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ncbi_taxonomy_109',
-        'USER': 'anonymous',
-        # 'PASSWORD': 'password',
-        'HOST': 'ensembldb.ensembl.org',
-        'PORT': '5306',
-    }, 
-
-    'ensembl_metadata': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ensembl_metadata_109',
-        'USER': 'anonymous',
-        # 'PASSWORD': 'password',
-        'HOST': 'ensembldb.ensembl.org',
-        'PORT': '5306',
-    }
-
-}
-
-ES_URL = (os.environ.get('BONSAI_URL') or 'http://127.0.0.1:9200/')
-
-ELASTICSEARCH_DSL={
-    'default': {
-        'hosts': ES_URL
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
+    "ncbi_taxon": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "ncbi_taxonomy_109",
+        "USER": "anonymous",
+        "HOST": "ensembldb.ensembl.org",
+        "PORT": "5306",
+    },
+    "ensembl_metadata": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "ensembl_metadata_109",
+        "USER": "anonymous",
+        "HOST": "ensembldb.ensembl.org",
+        "PORT": "5306",
     },
 }
 
-# ES_INDEXES = {
-#     'default': [
-#         ('taxonomy', 'taxon_search.indexes.Taxon'),
-#     ]
-# }
+ES_URL = os.environ.get("BONSAI_URL") or "http://127.0.0.1:9200/"
+
+ELASTICSEARCH_DSL_AUTOSYNC = False
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": ES_URL},
+}
 
 ES_DEFAULT_BATCH_SIZE = 100
 
@@ -126,38 +115,36 @@ ES_DEFAULT_BATCH_SIZE = 100
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

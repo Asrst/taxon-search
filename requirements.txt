@@ -1,10 +1,11 @@
 beautifulsoup4
 Django==4.2.1
+django-elasticsearch-dsl
+elasticsearch==7.12
+elasticsearch-dsl
+lxml
 pymysql
 pandas
 requests
 sqlalchemy
-elasticsearch==7.12
-elasticsearch-dsl
-django-elasticsearch-dsl
 

@@ -1,5 +1,3 @@
-/home/asrst/projects/taxon-search/src/taxon_search/taxon-elastic-search.ph file loaded...
-/home/asrst/projects/taxon-search/src/taxon_search/taxon-elastic-search.syn file loaded...
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -21,8 +19,8 @@ class Assembly(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'assembly'
-        unique_together = (('assembly_accession', 'assembly_default', 'base_count'),)
+        db_table = "assembly"
+        unique_together = (("assembly_accession", "assembly_default", "base_count"),)
 
 
 class AssemblySequence(models.Model):
@@ -33,8 +31,8 @@ class AssemblySequence(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'assembly_sequence'
-        unique_together = (('assembly_id', 'name', 'acc'),)
+        db_table = "assembly_sequence"
+        unique_together = (("assembly_id", "name", "acc"),)
 
 
 class ComparaAnalysis(models.Model):
@@ -47,8 +45,8 @@ class ComparaAnalysis(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'compara_analysis'
-        unique_together = (('division_id', 'method', 'set_name', 'dbname'),)
+        db_table = "compara_analysis"
+        unique_together = (("division_id", "method", "set_name", "dbname"),)
 
 
 class ComparaAnalysisEvent(models.Model):
@@ -61,7 +59,7 @@ class ComparaAnalysisEvent(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'compara_analysis_event'
+        db_table = "compara_analysis_event"
 
 
 class DataRelease(models.Model):
@@ -73,8 +71,8 @@ class DataRelease(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'data_release'
-        unique_together = (('ensembl_version', 'ensembl_genomes_version'),)
+        db_table = "data_release"
+        unique_together = (("ensembl_version", "ensembl_genomes_version"),)
 
 
 class DataReleaseDatabase(models.Model):
@@ -86,8 +84,8 @@ class DataReleaseDatabase(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'data_release_database'
-        unique_together = (('data_release_id', 'dbname'),)
+        db_table = "data_release_database"
+        unique_together = (("data_release_id", "dbname"),)
 
 
 class DataReleaseDatabaseEvent(models.Model):
@@ -100,7 +98,7 @@ class DataReleaseDatabaseEvent(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'data_release_database_event'
+        db_table = "data_release_database_event"
 
 
 class Division(models.Model):
@@ -110,7 +108,7 @@ class Division(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'division'
+        db_table = "division"
 
 
 class Genome(models.Model):
@@ -131,8 +129,8 @@ class Genome(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome'
-        unique_together = (('data_release_id', 'genome_id', 'division_id'),)
+        db_table = "genome"
+        unique_together = (("data_release_id", "genome_id", "division_id"),)
 
 
 class GenomeAlignment(models.Model):
@@ -145,8 +143,8 @@ class GenomeAlignment(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_alignment'
-        unique_together = (('genome_id', 'type', 'name', 'genome_database_id'),)
+        db_table = "genome_alignment"
+        unique_together = (("genome_id", "type", "name", "genome_database_id"),)
 
 
 class GenomeAnnotation(models.Model):
@@ -158,8 +156,8 @@ class GenomeAnnotation(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_annotation'
-        unique_together = (('genome_id', 'type', 'genome_database_id'),)
+        db_table = "genome_annotation"
+        unique_together = (("genome_id", "type", "genome_database_id"),)
 
 
 class GenomeComparaAnalysis(models.Model):
@@ -169,8 +167,8 @@ class GenomeComparaAnalysis(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_compara_analysis'
-        unique_together = (('genome_id', 'compara_analysis_id'),)
+        db_table = "genome_compara_analysis"
+        unique_together = (("genome_id", "compara_analysis_id"),)
 
 
 class GenomeDatabase(models.Model):
@@ -182,8 +180,8 @@ class GenomeDatabase(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_database'
-        unique_together = (('genome_id', 'dbname', 'species_id'),)
+        db_table = "genome_database"
+        unique_together = (("genome_id", "dbname", "species_id"),)
 
 
 class GenomeEvent(models.Model):
@@ -196,7 +194,7 @@ class GenomeEvent(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_event'
+        db_table = "genome_event"
 
 
 class GenomeFeature(models.Model):
@@ -209,8 +207,8 @@ class GenomeFeature(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_feature'
-        unique_together = (('genome_id', 'type', 'analysis', 'genome_database_id'),)
+        db_table = "genome_feature"
+        unique_together = (("genome_id", "type", "analysis", "genome_database_id"),)
 
 
 class GenomeVariation(models.Model):
@@ -223,8 +221,8 @@ class GenomeVariation(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'genome_variation'
-        unique_together = (('genome_id', 'type', 'name', 'genome_database_id'),)
+        db_table = "genome_variation"
+        unique_together = (("genome_id", "type", "name", "genome_database_id"),)
 
 
 class Organism(models.Model):
@@ -243,18 +241,18 @@ class Organism(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'organism'
+        db_table = "organism"
 
 
 class OrganismAlias(models.Model):
     organism_alias_id = models.AutoField(primary_key=True)
     organism_id = models.PositiveIntegerField()
-    alias = models.CharField(max_length=255, db_collation='latin1_bin', blank=True, null=True)
+    alias = models.CharField(max_length=255, db_collation="latin1_bin", blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'organism_alias'
-        unique_together = (('organism_id', 'alias'),)
+        db_table = "organism_alias"
+        unique_together = (("organism_id", "alias"),)
 
 
 class OrganismPublication(models.Model):
@@ -264,5 +262,5 @@ class OrganismPublication(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'organism_publication'
-        unique_together = (('organism_id', 'publication'),)
+        db_table = "organism_publication"
+        unique_together = (("organism_id", "publication"),)
