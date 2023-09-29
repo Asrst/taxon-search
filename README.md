@@ -59,10 +59,12 @@ Before you go ahead make sure you have [Python 3.10](https://www.python.org/down
 
 ## Additional information
 
+
 ### Taxonomy Name classes in the scope
 - `scientific name`, `synonym` and `equivalent name` (contains informal synonyms of formal scientific names) will be the primary focus during the initial stage of the project.
 - We might want to also consider `misspelling` and `misnomer`, but only in the later stages (after above ones are completed). The same applies to `anamorph` and `teleomorph`, since these two are only applicable to Fungi.
 - It seems `acronym` is primarily used for the viruses, so not applicable to Ensembl for the time being.
+
 
 ### How to install and setup an Elasticsearch server locally
 
@@ -80,6 +82,22 @@ Before you go ahead make sure you have [docker](https://docker.com/) installed a
         -e "discovery.type=single-node" \
         -t docker.elastic.co/elasticsearch/elasticsearch:8.8.0
     ```
+
+
+### Testing Taxonomy Search Results
+
+1. Get exact match of existing species (including synonyms):
+    - Ixodes scapularis should return Ixodes scapularis, Ixodes scapularis ISE6 and Ixodes scapularis PalLabHiFi
+    - Metaseiulus occidentalis should return Galendromus occidentalis
+    - Apis terrestris should return Bombus terrestris
+2. Get species given the taxonomy clade:
+    - Culicinae should return Aedes aegypti, Aedes albopictus, Culex quinquefasciatus and Culex quinquefasciatus JHB
+    - Triatominae should return Rhodnius prolixus
+    - Hemichordata should return Saccoglossus kowalevskii
+3. Get closest relatives when the search term is not part of Ensembl:
+    - Seisonidae should return Adineta vaga (first common ancestor: Rotifera)
+    - Cenolia should return Anneisia japonica (first common ancestor: Comatulinae)
+    - Culex maxi should return Culex quinuefasciatus and Culex quinquefasciatus JHB (first common ancestor: Culex)
 
 
 ### Useful commands
