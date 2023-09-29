@@ -68,8 +68,7 @@ Before you go ahead make sure you have [Python 3.10](https://www.python.org/down
 
 ### How to install and setup an Elasticsearch server locally
 
-Before you go ahead make sure you have [docker](https://docker.com/) installed and available in your system. The below steps are required only for the initial setup. To re-run an existing docker container, run `docker start my_es_server` and enter the previously saved password if prompted.
-
+Before you go ahead make sure you have [docker](https://docker.com/) installed and available in your system. The steps below are required only for the initial setup. To re-run an existing docker container, run `docker start my_es_server` and enter the previously saved password if prompted.
 
 1. Create the elasticsearch server:
     ```bash
@@ -87,17 +86,17 @@ Before you go ahead make sure you have [docker](https://docker.com/) installed a
 ### Testing Taxonomy Search Results
 
 1. Get exact match of existing species (including synonyms):
-    - Ixodes scapularis should return Ixodes scapularis, Ixodes scapularis ISE6 and Ixodes scapularis PalLabHiFi
-    - Metaseiulus occidentalis should return Galendromus occidentalis
-    - Apis terrestris should return Bombus terrestris
+    - _Ixodes scapularis_ should return _Ixodes scapularis_, _Ixodes scapularis_ ISE6 and _Ixodes scapularis_ PalLabHiFi
+    - _Metaseiulus occidentalis_ should return _Galendromus occidentalis_
+    - _Apis terrestris_ should return _Bombus terrestris_
 2. Get species given the taxonomy clade:
-    - Culicinae should return Aedes aegypti, Aedes albopictus, Culex quinquefasciatus and Culex quinquefasciatus JHB
-    - Triatominae should return Rhodnius prolixus
-    - Hemichordata should return Saccoglossus kowalevskii
+    - _Culicinae_ should return _Aedes aegypti_, _Aedes albopictus_, _Culex quinquefasciatus_ and _Culex quinquefasciatus_ JHB
+    - _Triatominae_ should return _Rhodnius prolixus_
+    - _Hemichordata_ should return _Saccoglossus kowalevskii_
 3. Get closest relatives when the search term is not part of Ensembl:
-    - Seisonidae should return Adineta vaga (first common ancestor: Rotifera)
-    - Cenolia should return Anneisia japonica (first common ancestor: Comatulinae)
-    - Culex maxi should return Culex quinuefasciatus and Culex quinquefasciatus JHB (first common ancestor: Culex)
+    - _Seisonidae_ should return _Adineta vaga_ (first common ancestor: Rotifera)
+    - _Cenolia_ should return _Anneisia japonica_ (first common ancestor: Comatulinae)
+    - _Culex maxi_ should return _Culex quinuefasciatus_ and _Culex quinquefasciatus_ JHB (first common ancestor: Culex)
 
 
 ### Useful commands
@@ -110,11 +109,11 @@ Before you go ahead make sure you have [docker](https://docker.com/) installed a
     ```bash
     printenv <env-var-name>
     ```
-- To query Database using Django models
+- To query the database using Django models
     ```bash
     python3 manage.py dbshell
     ```
-- Make Django Migrations
+- Make Django migrations
     ```bash
     python3 manage.py makemigrations
     ```

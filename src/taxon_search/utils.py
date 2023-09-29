@@ -1,20 +1,23 @@
 from sqlalchemy import create_engine, text as sql_text
-from .models import EnsemblMetadata, NCBITaxonFlat
+
+from .models import EnsemblMetadata
+
 
 TREE_TRAVERSAL_LIMIT = 5
 
+
 def load_synonym_file(path):
     """
-    Utility function to load 
+    Utility function to load
     Elastic search synonym files.
 
     Parameters:
     path (str): Path to the file.
 
     Returns:
-    return_type (List[str]): List of string for elastic search server 
+    return_type (List[str]): List of string for elastic search server
     to retrieve synonyms/phrases.
-    
+
     """
     syn_list = []
     with open(path, "r") as f:
@@ -24,11 +27,11 @@ def load_synonym_file(path):
     print(f"{path} file loaded...")
 
     return syn_list
-    
+
 
 def run_custom_sql(engine, query):
     """
-    Utility function to execute 
+    Utility function to execute
     custom sql directly on Django models.
 
     Parameters:
@@ -36,9 +39,9 @@ def run_custom_sql(engine, query):
     query (str): A SQL in multi-lined string format.
 
     Returns:
-    return_type (List[List]): List of Lists containing the 
+    return_type (List[List]): List of Lists containing the
     retrieved query results.
-    
+
     """
     with engine.connect() as cursor:
         rows = cursor.execute(sql_text(query))
@@ -48,19 +51,19 @@ def run_custom_sql(engine, query):
 
 def get_relevant_species(species_dict):
     """
-    Given a species dictonary with taxonomy id, the function
-    retrieves species from its parent id's and matches them 
+    Given a species dictionary with taxonomy id, the function
+    retrieves species from its parent id's and matches them
     with ensembl database.
 
     Parameters:
-    species_dict (Dict): A dictonary with species details like 
+    species_dict (Dict): A dictionary with species details like
     taxonomy id, parent id, name, etc.
 
     Returns:
-    species_dict (List[Dict]): List of Dictonaries containing the 
+    species_dict (List[Dict]): List of Dictionaries containing the
             matched relevant species.
 
-    parent_name (str): Name of parent taxonomy under 
+    parent_name (str): Name of parent taxonomy under
     which species match is found.
 
 
@@ -125,15 +128,15 @@ def get_all_parents(taxon_id):
 def get_species_from_parent(parent_id):
     """
     The function is called inside the `get_relevant_species`
-    function to get all species childs present under given a parent taxonomy id.
+    function to get all species children present under given a parent taxonomy id.
 
     Parameters:
     parent_id (str): Parent Taxonomy Id
 
     Returns:
-    return_type (List): List containing all species ids present under 
+    return_type (List): List containing all species ids present under
     given parent id tree.
-    
+
     """
 
     ncbi_engine = create_engine("mysql://anonymous@ensembldb.ensembl.org:3306/ncbi_taxonomy_109")

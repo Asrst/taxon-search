@@ -7,10 +7,10 @@ class EnsemblMetadata(models.Model):
     """
     EnsemblMetadata Django model class.
 
-    All fields defined are self explainatory and 
+    All fields defined are self explainatory and
     picked up from the ensembl MySQL database
     aftering joining 'organism' , 'genome', 'division'
-    and 'data_release' tables present 
+    and 'data_release' tables present
     in the 'ensmebl_metadata_109' schema/database.
 
     refer the scripts/get_ensembl_metadata.py for SQL query used.
@@ -32,11 +32,11 @@ class NCBITaxonFlat(models.Model):
     """
     NCBI Taxonomy Django model class.
 
-    All fields defined are self explainatory and 
+    All fields defined are self explainatory and
     picked up from the ensembl MySQL database
     aftering joining 'ncbi_taxa_node' and 'ncbi_taxa_name'
     tables present in the 'ncbi_taxonomy_109' schema/database.
-    
+
     refer the scripts/get_taxon_flat.py for SQL query used.
 
     """
