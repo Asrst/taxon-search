@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, text as sql_text
 pymysql.install_as_MySQLdb()
 
 
-def get_taxon_ids(url):
+def get_taxon_ids(species_url: str = "https://metazoa.ensembl.org/species.html"):
     """
     The function scrapes the metazoa taxonomy ids data
     from a fixed url: https://metazoa.ensembl.org/species.html
@@ -19,7 +19,6 @@ def get_taxon_ids(url):
 
     """
 
-    species_url = "https://metazoa.ensembl.org/species.html"
     response = requests.get(species_url)
     soup = BeautifulSoup(response.text, "lxml")
 
