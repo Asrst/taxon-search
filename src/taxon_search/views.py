@@ -35,8 +35,8 @@ def index(request):
         # call the elastic search function in search.py
         search_results = search_species(q)
 
-        name_class = [d["name_class"] for d in search_results][0]
-        rank = [d["rank"] for d in search_results][0]
+        name_class = [d["name_class"] for d in search_results][0] if search_results else ""
+        rank = [d["rank"] for d in search_results][0] if search_results else ""
 
         matched_species = set([d["species_taxon_id"] for d in search_results])
         species_names = EnsemblMetadata.objects.filter(taxonomy_id__in=matched_species)
